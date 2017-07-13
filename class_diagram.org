@@ -1,0 +1,108 @@
+#+begin_src plantuml :file hcdp_uml.png
+package "Health Care"{
+  Harvest ..> HealthState
+  CompositeHarvest --> NullHarvest
+  FlatHarvest --|> Harvest
+  CompositeHarvest o--|> Harvest
+  NullHarvest --|> Harvest
+  LinearHarvest --|> Harvest
+  RetirementHarvest --|> Harvest
+
+  LinearDegeneration --|> Degeneration
+
+  HealthInvestmentStateFactory --> Degeneration
+  HealthInvestmentStateFactory --> Harvest
+  HealthInvestmentStateFactory ..> HealthState
+  
+  LogrithmicConsumption --|> Consumption
+  
+  LogrithmicRegeneration --|> Regeneration
+  
+  HealthEndStateFactory --> Consumption
+  HealthEndStateFactory --> Regeneration
+  HealthEndStateFactory ..> HealthState
+}
+
+abstract class Harvest {
+  + bool InRange(int period) const
+  + int GetHarvest(HealthState state) const
+  + int GetWorkingHarvest(HealthState state) const
+}
+
+package "DP" {
+  DP --> DPTable
+  DP --> DPSolver
+
+  DPSolver --> EndogenousIteratorFactory
+  DPSolver --> ExogenousStrategy
+
+  EndogenousIteratorFactory ..> EndogenousIterator
+}
+
+package "Health Care DP" {
+  HealthDPTable --|> DPTable
+}
+
+abstract class DP<T> {
+  - shared_ptr<DPTable<T,T>> table_
+  - shared_ptr<DPTable<T,V>> table_val_
+  - void Train()
+  - vector<T> GetSolution(T start_state)
+}
+
+abstract class DPTable<T,V> {
+  + V& operator[](T)
+  + bool IsEndState(T)
+  + V& EndStateEvaluation(T)
+}
+
+class HealthDPTable {
+  + V& operator[](int, int, int)
+  + bool IsEndState(int, int, int)
+  + V& EndStateEvaluation(int, int, int)
+
+  - vector<vector<vector<HealthState>>> table_
+}
+
+class EndogenousIterator<T> {
+  + explicit operator bool() const
+  + T const& operator*() const
+  + T const* operator->() const
+  + virtual DPStateIterator<T>& operator++()
+
+  - bool done_;
+  - T state_;
+}
+
+class InvestmentIteratorFactory {
+  + InvestmentIteratorFactory(Regeneration)
+  + InvestmentIterator GetIterator(HealthState)
+}
+
+class EndogenousIteratorFactory {
+  + EndogenousIterator<T> GetIterator(T)
+}
+
+class HealthDPTableIteratorFactory {
+  + HealthDPTableIteratorFactory()
+  + HealthDPTableIterator GetIterator(HealthDPTable)
+}
+
+class HealthDPTableIterator {
+
+}
+
+class InvestmentIterator {
+
+}
+
+class HealthDPSolver {
+  - InvestmentIteratorFactory
+  - NextPeriodStrategy
+  - Solve(DP)
+}
+
+#+end_src
+
+#+RESULTS:
+[[file:hcdp_uml.png]]
