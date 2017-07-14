@@ -1,26 +1,50 @@
 #+begin_src plantuml :file hcdp_uml.png
 package "Health Care"{
   Harvest ..> HealthState
-  CompositeHarvest --> NullHarvest
-  FlatHarvest --|> Harvest
-  CompositeHarvest o--|> Harvest
   NullHarvest --|> Harvest
+  FlatHarvest --|> Harvest
   LinearHarvest --|> Harvest
   RetirementHarvest --|> Harvest
+  CompositeHarvest --> NullHarvest
+  CompositeHarvest o--|> Harvest
 
   LinearDegeneration --|> Degeneration
 
   HealthInvestmentStateFactory --> Degeneration
   HealthInvestmentStateFactory --> Harvest
-  HealthInvestmentStateFactory ..> HealthState
+  HealthInvestmentStateFactory --> HealthState
   
-  LogrithmicConsumption --|> Consumption
+  IncreasingDecayConsumption --|> Consumption
   
-  LogrithmicRegeneration --|> Regeneration
+  LogisticRegeneration --|> Regeneration
   
-  HealthEndStateFactory --> Consumption
-  HealthEndStateFactory --> Regeneration
-  HealthEndStateFactory ..> HealthState
+  PeriodResultFactory --> Consumption
+  PeriodResultFactory --> Regeneration
+  PeriodResultFactory --> HealthState
+  PeriodResultFactory --> Investment
+  PeriodResultFactory --> PeriodResult
+
+  PeriodResult --> Investment
+  PeriodResult --> HealthState
+}
+
+class HealthState {
+  + int period
+  + int health
+  + int cash
+  + int total_working_harvest
+  + bool IsAlive()
+}
+
+class Investment {
+  + int health_investment
+  + int life_investment
+}
+
+class PeriodResult {
+  + HealthState state
+  + Investment investment
+  + double life_enjoyment
 }
 
 abstract class Harvest {
@@ -39,10 +63,6 @@ package "DP" {
   EndogenousIteratorFactory ..> EndogenousIterator
 }
 
-package "Health Care DP" {
-  HealthDPTable --|> DPTable
-}
-
 abstract class DP<T> {
   - shared_ptr<DPTable<T,T>> table_
   - shared_ptr<DPTable<T,V>> table_val_
@@ -56,15 +76,7 @@ abstract class DPTable<T,V> {
   + V& EndStateEvaluation(T)
 }
 
-class HealthDPTable {
-  + V& operator[](int, int, int)
-  + bool IsEndState(int, int, int)
-  + V& EndStateEvaluation(int, int, int)
-
-  - vector<vector<vector<HealthState>>> table_
-}
-
-class EndogenousIterator<T> {
+abstract class EndogenousIterator<T> {
   + explicit operator bool() const
   + T const& operator*() const
   + T const* operator->() const
@@ -74,13 +86,44 @@ class EndogenousIterator<T> {
   - T state_;
 }
 
-class InvestmentIteratorFactory {
-  + InvestmentIteratorFactory(Regeneration)
-  + InvestmentIterator GetIterator(HealthState)
+abstract class EndogenousIteratorFactory {
+  + EndogenousIterator<T> GetIterator(T)
 }
 
-class EndogenousIteratorFactory {
-  + EndogenousIterator<T> GetIterator(T)
+package "Health Care DP" {
+  HealthDPTable --|> DPTable
+
+  EndogenousPeriodResultIterator --|> EndogenousIterator
+  EndogenousPeriodResultIterator ..> PeriodResultFactory  
+  EndogenousPeriodResultIteratorFactory --|> EndogenousIteratorFactory
+  EndogenousPeriodResultIteratorFactory ..> EndogenousPeriodResultIterator
+  
+  HealthDPTableIterator --|> DPTableIterator
+  HealthDPTableIteratorFactory --|> DPTableIteratorFactory
+  HealthDPTableIteratorFactory ..> HealthDPTableIterator
+  
+  HealthDPSolver --|> DPSolver
+  HealthDPSolver o--> EndogenousPeriodResultIteratorFactory
+  HealthDPSolver o--> HealthCareExogenousstrategy
+  HealthCareExogenousStrategy --|> ExogenousStrategy
+  HealthCareExogenousStrategy ..> HealthInvestmentStateFactory
+}
+
+class HealthDPTable {
+  + V& operator[](int, int, int)
+  + bool IsEndState(int, int, int)
+  + V& EndStateEvaluation(int, int, int)
+
+  - vector<vector<vector<HealthState>>> table_
+}
+
+class EndogenousPeriodResultIterator {
+
+}
+
+class EndogenousPeriodResultIteratorFactory {
+  + InvestmentIteratorFactory()
+  + InvestmentIterator GetIterator(HealthState)
 }
 
 class HealthDPTableIteratorFactory {
@@ -89,10 +132,6 @@ class HealthDPTableIteratorFactory {
 }
 
 class HealthDPTableIterator {
-
-}
-
-class InvestmentIterator {
 
 }
 
