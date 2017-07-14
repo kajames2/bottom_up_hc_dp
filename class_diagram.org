@@ -54,91 +54,103 @@ abstract class Harvest {
 }
 
 package "DP" {
-  DP --> DPTable
-  DP --> DPSolver
+  DP ..> DPStorage
+  DP ..> DecisionOptimizer
+  DP ..> ExogenousStrategy
+  DP ..> StateIterator
+  DecisionOptimizer --> DecisionIteratorFactory
+  DecisionOptimizer --> ExogenousState
 
-  DPSolver --> EndogenousIteratorFactory
-  DPSolver --> ExogenousStrategy
+  DecisionIteratorFactory ..> DecisionIterator
+  DPStorage --> EndogenousState
+}
 
-  EndogenousIteratorFactory ..> EndogenousIterator
+abstract class ExogenousStrategy<T> {
+  ExogenousState<T> GetExogenous(T)
 }
 
 abstract class DP<T> {
-  - shared_ptr<DPTable<T,T>> table_
-  - shared_ptr<DPTable<T,V>> table_val_
+  - unique_ptr<DPStorage<T>> storage_
   - void Train()
-  - vector<T> GetSolution(T start_state)
+  - vector<EndogenousState<T>> GetSolution(T start_state)
 }
 
-abstract class DPTable<T,V> {
-  + V& operator[](T)
+class DecisionOptimizer<T> {
+  + pair<EndogenousState<T>, double> FindOptimal(ExogenousState<T> intermediate)
+}
+
+abstract class DPStorage<T> {
+  + const EndogenousState<T>& GetOptimalDecision(T)
+  + double GetOptimalValue(T)
   + bool IsEndState(T)
-  + V& EndStateEvaluation(T)
 }
 
-abstract class EndogenousIterator<T> {
+abstract class StateIterator<T> {
+
+}
+
+class ExogenousState<T> {
+  T state;
+}
+
+class EndogenousState<T> {
+  T state;
+  double value;
+}
+
+abstract class DecisionIterator<T> {
   + explicit operator bool() const
-  + T const& operator*() const
-  + T const* operator->() const
-  + virtual DPStateIterator<T>& operator++()
+  + EndogenousState<T> const& operator*() const
+  + EndogenousState<T> const* operator->() const
+  + virtual DecisionIterator<EndogenousState<T>>& operator++()
 
   - bool done_;
   - T state_;
 }
 
-abstract class EndogenousIteratorFactory {
-  + EndogenousIterator<T> GetIterator(T)
+abstract class DecisionIteratorFactory<T> {
+  + DecisionIterator<EndogenousState<T>> GetIterator(ExogenousState<T>)
 }
 
 package "Health Care DP" {
-  HealthDPTable --|> DPTable
+  HealthDPStorage --|> DPStorage
 
-  EndogenousPeriodResultIterator --|> EndogenousIterator
-  EndogenousPeriodResultIterator ..> PeriodResultFactory  
-  EndogenousPeriodResultIteratorFactory --|> EndogenousIteratorFactory
-  EndogenousPeriodResultIteratorFactory ..> EndogenousPeriodResultIterator
+  PeriodResultIterator --|> DecisionIterator
+  PeriodResultIterator ..> PeriodResultFactory
+  PeriodResultIteratorFactory --|> DecisionIteratorFactory
+  PeriodResultIteratorFactory ..> PeriodResultIterator
+
+  HealthStateIterator --|> StateIterator
+  EndogenousHealthState --|> EndogenousState
+  EndogenousHealthState ..> PeriodResult
+  ExogenousHealthStateStrategy --|> ExogenousStrategy
+  ExogenousHealthStateStrategy ..> HealthInvestmentStateFactory
   
-  HealthDPTableIterator --|> DPTableIterator
-  HealthDPTableIteratorFactory --|> DPTableIteratorFactory
-  HealthDPTableIteratorFactory ..> HealthDPTableIterator
-  
-  HealthDPSolver --|> DPSolver
-  HealthDPSolver o--> EndogenousPeriodResultIteratorFactory
-  HealthDPSolver o--> HealthCareExogenousstrategy
-  HealthCareExogenousStrategy --|> ExogenousStrategy
-  HealthCareExogenousStrategy ..> HealthInvestmentStateFactory
+  ExogenousHealthState --|> ExogenousState
+  ExogenousHealthState ..> HealthState
 }
 
-class HealthDPTable {
-  + V& operator[](int, int, int)
-  + bool IsEndState(int, int, int)
-  + V& EndStateEvaluation(int, int, int)
-
-  - vector<vector<vector<HealthState>>> table_
+class HealthDPStorage {
 }
+abstract class HealthDPStorage {
+  + const EndogenousHealthState& GetOptimalDecision(HealthState)
+  + double GetOptimalValue(HealthState)
+  + bool IsEndState(HealthState)
 
-class EndogenousPeriodResultIterator {
+  - vector<vector<vector<EndogenousHealthState>>> state_table_
+  - vector<vector<vector<double>>> value_table_
+}
+class PeriodResultIterator {
 
 }
 
-class EndogenousPeriodResultIteratorFactory {
+class PeriodResultIteratorFactory {
   + InvestmentIteratorFactory()
   + InvestmentIterator GetIterator(HealthState)
 }
 
-class HealthDPTableIteratorFactory {
-  + HealthDPTableIteratorFactory()
-  + HealthDPTableIterator GetIterator(HealthDPTable)
-}
+class HealthStateIterator {
 
-class HealthDPTableIterator {
-
-}
-
-class HealthDPSolver {
-  - InvestmentIteratorFactory
-  - NextPeriodStrategy
-  - Solve(DP)
 }
 
 #+end_src
