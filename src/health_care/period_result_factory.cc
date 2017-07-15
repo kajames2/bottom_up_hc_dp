@@ -10,9 +10,9 @@
 
 namespace healthcare {
 PeriodResultFactory::PeriodResultFactory(
-    std::shared_ptr<const Regeneration> regeneration,
-    std::shared_ptr<const Consumption> consumption)
-    : regeneration_(regeneration), consumption_(consumption) {}
+    std::unique_ptr<const Regeneration> regeneration,
+    std::unique_ptr<const Consumption> consumption)
+    : regeneration_(std::move(regeneration)), consumption_(std::move(consumption)) {}
 
 PeriodResult
 PeriodResultFactory::GetPeriodResult(const HealthState &state,

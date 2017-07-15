@@ -6,9 +6,9 @@
 
 namespace healthcare {
 HealthInvestmentStateFactory::HealthInvestmentStateFactory(
-    std::shared_ptr<const Harvest> harvest,
-    std::shared_ptr<const Degeneration> degeneration)
-    : harvest_(harvest), degeneration_(degeneration) {}
+    std::unique_ptr<const Harvest> harvest,
+    std::unique_ptr<const Degeneration> degeneration)
+    : harvest_(std::move(harvest)), degeneration_(std::move(degeneration)) {}
 
 HealthState HealthInvestmentStateFactory::GetInvestmentState(
     const HealthState &state) const {

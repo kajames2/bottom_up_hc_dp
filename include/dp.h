@@ -13,21 +13,21 @@ namespace genericdp {
 template <class T> class DP {
 public:
   DP(std::unique_ptr<DPStorage<T>> storage,
-     std::shared_ptr<const ExogenousStrategy<T>> exo_strat,
-     std::shared_ptr<const DecisionOptimizer<T>> decision_maker);
+     std::unique_ptr<const ExogenousStrategy<T>> exo_strat,
+     DecisionOptimizer<T> decision_maker);
   void Train(StateIterator<T> it);
   std::vector<EndogenousState<T>> GetSolution(T init_state) const;
 
 private:
   std::unique_ptr<DPStorage<T>> storage_;
-  std::shared_ptr<const ExogenousStrategy<T>> exo_strat_;
-  std::shared_ptr<const DecisionOptimizer<T>> decision_maker_;
+  std::unique_ptr<const ExogenousStrategy<T>> exo_strat_;
+  DecisionOptimizer<T> decision_maker_;
 };
 
 template <class T>
 DP<T>::DP(std::unique_ptr<DPStorage<T>> storage,
-       std::shared_ptr<const ExogenousStrategy<T>> exo_strat,
-       std::shared_ptr<const DecisionOptimizer<T>> decision_maker)
+       std::unique_ptr<const ExogenousStrategy<T>> exo_strat,
+       DecisionOptimizer<T> decision_maker)
     : storage_(storage), exo_strat_(exo_strat_),
       decision_maker_(decision_maker) {}
 

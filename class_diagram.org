@@ -56,16 +56,16 @@ abstract class Harvest {
 package "DP" {
   DP ..> DPStorage
   DP ..> DecisionOptimizer
-  DP ..> ExogenousStrategy
+  DP ..> ExogenousFactory
   DP ..> StateIterator
-  DecisionOptimizer --> DecisionIteratorFactory
+  DecisionOptimizer --> EndogenousIteratorFactory
   DecisionOptimizer --> ExogenousState
 
-  DecisionIteratorFactory ..> DecisionIterator
+  EndogenousIteratorFactory ..> EndogenousIterator
   DPStorage --> EndogenousState
 }
 
-abstract class ExogenousStrategy<T> {
+abstract class ExogenousFactory<T> {
   ExogenousState<T> GetExogenous(T)
 }
 
@@ -98,7 +98,7 @@ class EndogenousState<T> {
   double value;
 }
 
-abstract class DecisionIterator<T> {
+abstract class EndogenousIterator<T> {
   + explicit operator bool() const
   + EndogenousState<T> const& operator*() const
   + EndogenousState<T> const* operator->() const
@@ -108,26 +108,31 @@ abstract class DecisionIterator<T> {
   - T state_;
 }
 
-abstract class DecisionIteratorFactory<T> {
+abstract class EndogenousIteratorFactory<T> {
   + DecisionIterator<EndogenousState<T>> GetIterator(ExogenousState<T>)
 }
 
 package "Health Care DP" {
   HealthDPStorage --|> DPStorage
-
-  PeriodResultIterator --|> DecisionIterator
-  PeriodResultIterator ..> PeriodResultFactory
-  PeriodResultIteratorFactory --|> DecisionIteratorFactory
-  PeriodResultIteratorFactory ..> PeriodResultIterator
-
   HealthStateIterator --|> StateIterator
-  EndogenousHealthState --|> EndogenousState
-  EndogenousHealthState ..> PeriodResult
-  ExogenousHealthStateStrategy --|> ExogenousStrategy
-  ExogenousHealthStateStrategy ..> HealthInvestmentStateFactory
-  
-  ExogenousHealthState --|> ExogenousState
-  ExogenousHealthState ..> HealthState
+  HealthStateIterator ..> HealthState
+
+  EndogenousResultIterator --|> EndogenousIterator
+  EndogenousResultIterator ..> ResultToEndogenousAdapter
+  EndogenousResultIterator ..> ResultToEndogenousAdapterFactory
+  EndogenousResultIteratorFactory --|> EndogenousIteratorFactory
+  EndogenousResultIteratorFactory ..> EndogenousResultIterator
+
+  ResultToEndogenousAdapter --|> EndogenousState
+  ResultToEndogenousAdapter ..> PeriodResult
+  ResultToEndogenousAdapterFactory ..> PeriodResultFactory
+  ResultToEndogenousAdapterFactory --> ResultToEndogenousAdapter
+
+  HealthStateToExogenousAdapterFactory --|> ExogenousFactory
+  HealthStateToExogenousAdapterFactory --> HealthStateToExogenousAdapter
+  HealthStateToExogenousAdapterFactory ..> HealthInvestmentStateFactory
+  HealthStateToExogenousAdapter --|> ExogenousState
+  HealthStateToExogenousAdapter ..> HealthState
 }
 
 abstract class HealthDPStorage {
@@ -138,11 +143,11 @@ abstract class HealthDPStorage {
   - vector<vector<vector<EndogenousHealthState>>> state_table_
   - vector<vector<vector<double>>> value_table_
 }
-class PeriodResultIterator {
+class EndogenousResultIterator {
 
 }
 
-class PeriodResultIteratorFactory {
+class EndogenousResultIteratorFactory {
   + InvestmentIteratorFactory()
   + InvestmentIterator GetIterator(HealthState)
 }

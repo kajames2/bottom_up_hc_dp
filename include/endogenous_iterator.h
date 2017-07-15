@@ -2,15 +2,19 @@
 #define _ENDOGENOUS_ITERATOR_H_
 
 #include "endogenous_state.h"
-
+#include "exogenous_state.h"
 #include <iterator>
+#include <memory>
+
 namespace genericdp {
 template <class T> class EndogenousIterator:
       public std::iterator<std::input_iterator_tag, EndogenousState<T>> {
 public:
-  using reference = EndogenousState<T> const&;
-  using pointer = EndogenousState<T> const*;
-
+  using Endog = EndogenousState<T>;
+  using Exog = ExogenousState<T>;
+  using reference = std::shared_ptr<Endog> const&;
+  using pointer = std::shared_ptr<Endog> const*;
+  
   EndogenousIterator(): done_(false) {}
 
   explicit operator bool() const { return !done_; }
@@ -20,9 +24,9 @@ public:
   virtual EndogenousIterator<T>& operator++() = 0;
 
 protected:
-  EndogenousIterator(EndogenousState<T> state) : state_(state), done_(false) {}
+  EndogenousIterator(const Exog& state) : state_(), done_(false) {}
   bool done_;
-  EndogenousState<T> state_;
+  std::shared_ptr<Endog> state_;
 };
 }  // namespace genericdp
 #endif  // _ENDOGENOUS_ITERATOR_H_

@@ -33,18 +33,16 @@ protected:
     alive_state_ = healthcare::HealthState(1, 50, 45, 10);
     investment_ = healthcare::Investment(20, 10);
     over_investment_ = healthcare::Investment(80, 20);
-    regen_ = std::make_shared<const MockRegeneration>();
-    consumption_ = std::make_shared<const MockConsumption>();
+    std::unique_ptr<const MockRegeneration> regen = std::make_unique<const MockRegeneration>();
+    std::unique_ptr<const MockConsumption> consumption = std::make_unique<const MockConsumption>();
     fact_ =
-        std::make_unique<healthcare::PeriodResultFactory>(regen_, consumption_);
+        std::make_unique<healthcare::PeriodResultFactory>(std::move(regen), std::move(consumption));
   }
   healthcare::HealthState dead_state_;
   healthcare::HealthState alive_state_;
   healthcare::Investment investment_;
   healthcare::Investment over_investment_;
   std::unique_ptr<healthcare::PeriodResultFactory> fact_;
-  std::shared_ptr<const MockRegeneration> regen_;
-  std::shared_ptr<const MockConsumption> consumption_;
 };
 
 TEST_F(PeriodResultFactoryTest, GetHealthRegained) {

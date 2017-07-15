@@ -8,7 +8,7 @@
 namespace healthcare {
 CompositeHarvest::CompositeHarvest()
     : harvest_strats_() {
-  null_harvest_ = std::make_shared<NullHarvest>();
+  null_harvest_ = std::make_unique<NullHarvest>();
 }
 
 int CompositeHarvest::CalculateHarvest(const HealthState &state) const {
@@ -19,7 +19,7 @@ int CompositeHarvest::GetWorkingHarvest(const HealthState &state) const {
     return GetHarvestInRange(state.period)->GetWorkingHarvest(state);
 }
 
-void CompositeHarvest::AddHarvest(std::shared_ptr<Harvest> state) {
+void CompositeHarvest::AddHarvest(std::shared_ptr<const Harvest> state) {
   harvest_strats_.push_back(state);
 }
 

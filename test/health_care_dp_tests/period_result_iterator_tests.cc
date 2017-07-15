@@ -33,20 +33,20 @@ protected:
 
   virtual void SetUp() {
     max_remaining_cash_ = 15;
-    alive_state_ = std::make_shared<healthcare::HealthState>(1, 50, 50, 10);
-    std::shared_ptr<const MockRegeneration> regen =
-        std::make_shared<const MockRegeneration>();
-    std::shared_ptr<const MockConsumption> consumption =
-        std::make_shared<const MockConsumption>();
-    std::shared_ptr<healthcare::PeriodResultFactory> fact =
-        std::make_shared<healthcare::PeriodResultFactory>(regen, consumption);
-    end_it_ = std::make_unique<healthcaredp::PeriodResultIterator>(
-        fact, alive_state_, max_remaining_cash_);
+    alive_state_ = healthcare::HealthState(1, 50, 50, 10);
+    std::unique_ptr<const MockRegeneration> regen =
+        std::make_unique<const MockRegeneration>();
+    std::unique_ptr<const MockConsumption> consumption =
+        std::make_unique<const MockConsumption>();
+    std::unique_ptr<healthcare::PeriodResultFactory> fact =
+        std::make_unique<healthcare::PeriodResultFactory>(std::move(regen), std::move(consumption));
+    end_it_ = std::make_shared<healthcaredp::PeriodResultIterator>(
+        std::move(fact), alive_state_, max_remaining_cash_);
   }
 
   int max_remaining_cash_;
-  std::shared_ptr<healthcare::HealthState> alive_state_;
-  std::unique_ptr<healthcaredp::PeriodResultIterator> end_it_;
+  healthcare::HealthState alive_state_;
+  std::shared_ptr<healthcaredp::PeriodResultIterator> end_it_;
 };
 
 TEST_F(PeriodResultIteratorTest, CorrectNumIts) {
@@ -58,8 +58,8 @@ TEST_F(PeriodResultIteratorTest, CorrectNumIts) {
   }
 
   int expected_count = 0;
-  for (int hi = 0; hi <= alive_state_->cash; hi += 10) {
-    expected_count += std::min(alive_state_->cash - hi + 1, max_remaining_cash_ + 1);
+  for (int hi = 0; hi <= alive_state_.cash; hi += 10) {
+    expected_count += std::min(alive_state_.cash - hi + 1, max_remaining_cash_ + 1);
   }
   ASSERT_EQ(expected_count, count);
 }

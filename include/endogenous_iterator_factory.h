@@ -2,13 +2,13 @@
 #define _ENDOGENOUS_ITERATOR_FACTORY_H_
 
 #include "endogenous_iterator.h"
-
+#include "exogenous_state.h"
 #include <memory>
 
 namespace genericdp {
-template <class Intermediate, class End> class EndogenousIteratorFactory {
+template <class T> class EndogenousIteratorFactory {
 public:
-  EndogenousIterator<End> GetIterator(Intermediate input);
+  EndogenousIterator<T> GetIterator(const ExogenousState<T>& input);
 };
 } // namespace genericdp
 #endif // _ENDOGENOUS_ITERATOR_FACTORY_H_

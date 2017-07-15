@@ -10,16 +10,17 @@
 namespace genericdp {
 template <class T> class DecisionOptimizer {
 public:
-  DecisionOptimizer(std::shared_ptr<const EndogenousIteratorFactory<T>> fact,
+  DecisionOptimizer(std::unique_ptr<const EndogenousIteratorFactory<T>> fact,
                  double discount_rate);
   std::pair<EndogenousState<T>, double>
   FindOptimal(const ExogenousState<T> &int_state,
               const DPStorage<T> &storage) const;
 
 private:
-  std::shared_ptr<const EndogenousIteratorFactory<T>> fact_;
   double CalculateValue(const EndogenousState<T> &end_state,
                         const DPStorage<T> &storage) const;
+
+  std::unique_ptr<const EndogenousIteratorFactory<T>> fact_;
   double discount_rate_;
 };
 

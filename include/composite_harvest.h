@@ -14,7 +14,7 @@ public:
   CompositeHarvest();
   CompositeHarvest(std::vector<std::shared_ptr<Harvest>> harvest_strats);
   int GetWorkingHarvest(const HealthState &state) const override;
-  void AddHarvest(std::shared_ptr<Harvest> harvest);
+  void AddHarvest(std::shared_ptr<const Harvest> harvest);
   bool InRange(int period) const override;
 
 protected:
@@ -22,6 +22,7 @@ protected:
 
 private:
   std::shared_ptr<const Harvest> GetHarvestInRange(int period) const;
+
   std::vector<std::shared_ptr<const Harvest>> harvest_strats_;
   std::shared_ptr<NullHarvest> null_harvest_;
 };
