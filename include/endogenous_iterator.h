@@ -1,14 +1,15 @@
 #ifndef _ENDOGENOUS_ITERATOR_H_
 #define _ENDOGENOUS_ITERATOR_H_
 
-#include <iterator>
+#include "endogenous_state.h"
 
+#include <iterator>
 namespace genericdp {
 template <class T> class EndogenousIterator:
-  public std::iterator<std::input_iterator_tag, T> {
+      public std::iterator<std::input_iterator_tag, EndogenousState<T>> {
 public:
-  using reference = T const&;
-  using pointer = T const*;
+  using reference = EndogenousState<T> const&;
+  using pointer = EndogenousState<T> const*;
 
   EndogenousIterator(): done_(false) {}
 
@@ -18,16 +19,10 @@ public:
 
   virtual EndogenousIterator<T>& operator++() = 0;
 
-  /*  DPStateIterator<T> operator++(int) {
-    DPStateIterator<T> const tmp(*this);
-    ++*this;
-    return tmp;
-    }*/
-
 protected:
-  EndogenousIterator(const T& state) : state_(state), done_(false) {}
+  EndogenousIterator(EndogenousState<T> state) : state_(state), done_(false) {}
   bool done_;
-  T state_;
+  EndogenousState<T> state_;
 };
 }  // namespace genericdp
 #endif  // _ENDOGENOUS_ITERATOR_H_

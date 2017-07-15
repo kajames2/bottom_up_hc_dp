@@ -1,4 +1,4 @@
-#include "endogenous_period_result_iterator.h"
+#include "period_result_iterator.h"
 #include "consumption.h"
 #include "health_state.h"
 #include "investment.h"
@@ -10,9 +10,9 @@
 #include <memory>
 #include <algorithm>
 
-class EndogenousPeriodResultIteratorTest : public ::testing::Test {
+class PeriodResultIteratorTest : public ::testing::Test {
 public:
-  EndogenousPeriodResultIteratorTest() {}
+  PeriodResultIteratorTest() {}
 
 protected:
   class MockConsumption : public healthcare::Consumption {
@@ -40,17 +40,17 @@ protected:
         std::make_shared<const MockConsumption>();
     std::shared_ptr<healthcare::PeriodResultFactory> fact =
         std::make_shared<healthcare::PeriodResultFactory>(regen, consumption);
-    end_it_ = std::make_unique<healthcaredp::EndogenousPeriodResultIterator>(
+    end_it_ = std::make_unique<healthcaredp::PeriodResultIterator>(
         fact, alive_state_, max_remaining_cash_);
   }
 
   int max_remaining_cash_;
   std::shared_ptr<healthcare::HealthState> alive_state_;
-  std::unique_ptr<healthcaredp::EndogenousPeriodResultIterator> end_it_;
+  std::unique_ptr<healthcaredp::PeriodResultIterator> end_it_;
 };
 
-TEST_F(EndogenousPeriodResultIteratorTest, CorrectNumIts) {
-  healthcaredp::EndogenousPeriodResultIterator it = *end_it_;
+TEST_F(PeriodResultIteratorTest, CorrectNumIts) {
+  healthcaredp::PeriodResultIterator it = *end_it_;
   int count = 0;
   while (it) {
     ++it;

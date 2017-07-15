@@ -130,8 +130,6 @@ package "Health Care DP" {
   ExogenousHealthState ..> HealthState
 }
 
-class HealthDPStorage {
-}
 abstract class HealthDPStorage {
   + const EndogenousHealthState& GetOptimalDecision(HealthState)
   + double GetOptimalValue(HealthState)

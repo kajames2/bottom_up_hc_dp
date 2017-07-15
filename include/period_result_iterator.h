@@ -1,6 +1,8 @@
-#ifndef _ENDOGENOUS_PERIOD_RESULT_ITERATOR_H_
-#define _ENDOGENOUS_PERIOD_RESULT_ITERATOR_H_
+#ifndef _PERIOD_RESULT_ITERATOR_H_
+#define _PERIOD_RESULT_ITERATOR_H_
 
+#include "endogenous_health_state.h"
+#include "exogenous_health_state.h"
 #include "endogenous_iterator.h"
 #include "health_state.h"
 #include "period_result.h"
@@ -9,15 +11,14 @@
 #include <memory>
 
 namespace healthcaredp {
-class EndogenousPeriodResultIterator
-    : public genericdp::EndogenousIterator<healthcare::PeriodResult> {
+class PeriodResultIterator
+    : public genericdp::EndogenousIterator<EndogenousHealthState> {
 public:
-  EndogenousPeriodResultIterator(
+  PeriodResultIterator(
       std::shared_ptr<const healthcare::PeriodResultFactory> result_factory,
-      std::shared_ptr<const healthcare::HealthState> state,
+      std::shared_ptr<const ExogenousHealthState> state,
       int max_remaining_cash = 20);
-  genericdp::EndogenousIterator<healthcare::PeriodResult> &
-  operator++() override;
+  virtual PeriodResultIterator& operator++() override;
 
 private:
   bool HasRemainingCash();
@@ -32,4 +33,4 @@ private:
   std::shared_ptr<const healthcare::PeriodResultFactory> result_factory_;
 };
 } // namespace healthcaredp
-#endif // _ENDOGENOUS_PERIOD_RESULT_ITERATOR_H_
+#endif // _PERIOD_RESULT_ITERATOR_H_
