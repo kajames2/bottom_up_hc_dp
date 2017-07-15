@@ -1,0 +1,65 @@
+#+begin_src plantuml :file hcdp_uml.png
+
+package "genericdp" {
+  DP ..> DPStorage
+  DP ..> DecisionOptimizer
+  DP ..> ExogenousFactory
+  DP ..> StateIterator
+  DecisionOptimizer --> EndogenousIteratorFactory
+  DecisionOptimizer --> ExogenousState
+
+  EndogenousIteratorFactory ..> EndogenousIterator
+  DPStorage --> EndogenousState
+}
+
+abstract class ExogenousFactory<T> {
+  ExogenousState<T> GetExogenous(T)
+}
+
+abstract class DP<T> {
+  - unique_ptr<DPStorage<T>> storage_
+  - void Train()
+  - vector<EndogenousState<T>> GetSolution(T start_state)
+}
+
+class DecisionOptimizer<T> {
+  + pair<EndogenousState<T>, double> FindOptimal(ExogenousState<T> intermediate)
+}
+
+abstract class DPStorage<T> {
+  + const EndogenousState<T>& GetOptimalDecision(T)
+  + double GetOptimalValue(T)
+  + bool IsEndState(T)
+}
+
+abstract class StateIterator<T> {
+
+}
+
+class ExogenousState<T> {
+  T state;
+}
+
+class EndogenousState<T> {
+  T state;
+  double value;
+}
+
+abstract class EndogenousIterator<T> {
+  + explicit operator bool() const
+  + EndogenousState<T> const& operator*() const
+  + EndogenousState<T> const* operator->() const
+  + virtual DecisionIterator<EndogenousState<T>>& operator++()
+
+  - bool done_;
+  - T state_;
+}
+
+abstract class EndogenousIteratorFactory<T> {
+  + DecisionIterator<EndogenousState<T>> GetIterator(ExogenousState<T>)
+}
+
+#+end_src
+
+#+RESULTS:
+[[file:genericdp_uml.png]]

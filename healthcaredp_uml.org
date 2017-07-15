@@ -1,0 +1,67 @@
+#+begin_src plantuml :file hcdp_uml.png
+
+3package "healthcare" {
+class HealthState
+class PeriodResult
+class PeriodResultFactory
+class HealthInvestmentStateFactory 
+}
+
+package "genericdp" {
+abstract class DPStorage
+abstract class StateIterator
+abstract class ExogenousState
+abstract class EndogenousState
+abstract class ExogenousFactory
+abstract class EndogenousIterator
+abstract class EndogenousIteratorFactory
+}
+
+package "healthcaredp" {
+  HealthDPStorage --|> DPStorage
+  HealthStateIterator --|> StateIterator
+  HealthStateIterator ..> HealthState
+
+  EndogenousResultIterator --|> EndogenousIterator
+  EndogenousResultIterator ..> ResultToEndogenousAdapter
+  EndogenousResultIterator ..> ResultToEndogenousAdapterFactory
+  EndogenousResultIteratorFactory --|> EndogenousIteratorFactory
+  EndogenousResultIteratorFactory ..> EndogenousResultIterator
+
+  ResultToEndogenousAdapter --|> EndogenousState
+  ResultToEndogenousAdapter ..> PeriodResult
+  ResultToEndogenousAdapterFactory ..> PeriodResultFactory
+  ResultToEndogenousAdapterFactory --> ResultToEndogenousAdapter
+
+  HealthStateToExogenousAdapterFactory --|> ExogenousFactory
+  HealthStateToExogenousAdapterFactory --> HealthStateToExogenousAdapter
+  HealthStateToExogenousAdapterFactory ..> HealthInvestmentStateFactory
+  HealthStateToExogenousAdapter --|> ExogenousState
+  HealthStateToExogenousAdapter ..> HealthState
+}
+
+abstract class HealthDPStorage {
+  + const EndogenousHealthState& GetOptimalDecision(HealthState)
+  + double GetOptimalValue(HealthState)
+  + bool IsEndState(HealthState)
+
+  - vector<vector<vector<EndogenousHealthState>>> state_table_
+  - vector<vector<vector<double>>> value_table_
+}
+class EndogenousResultIterator {
+
+}
+
+class EndogenousResultIteratorFactory {
+  + InvestmentIteratorFactory()
+  + InvestmentIterator GetIterator(HealthState)
+}
+
+class HealthStateIterator {
+
+}
+
+#+end_src
+
+#+RESULTS:
+[[file:healthcaredp_uml.png]]

@@ -1,0 +1,60 @@
+#+begin_src plantuml :file hcdp_uml.png
+
+package "healthcare"{
+  Harvest ..> HealthState
+  NullHarvest --|> Harvest
+  FlatHarvest --|> Harvest
+  LinearHarvest --|> Harvest
+  RetirementHarvest --|> Harvest
+  CompositeHarvest --> NullHarvest
+  CompositeHarvest o--|> Harvest
+
+  LinearDegeneration --|> Degeneration
+
+  HealthInvestmentStateFactory --> Degeneration
+  HealthInvestmentStateFactory --> Harvest
+  HealthInvestmentStateFactory --> HealthState
+  
+  IncreasingDecayConsumption --|> Consumption
+  
+  LogisticRegeneration --|> Regeneration
+  
+  PeriodResultFactory --> Consumption
+  PeriodResultFactory --> Regeneration
+  PeriodResultFactory --> HealthState
+  PeriodResultFactory --> Investment
+  PeriodResultFactory --> PeriodResult
+
+  PeriodResult --> Investment
+  PeriodResult --> HealthState
+}
+
+class HealthState {
+  + int period
+  + int health
+  + int cash
+  + int total_working_harvest
+  + bool IsAlive()
+}
+
+class Investment {
+  + int health_investment
+  + int life_investment
+}
+
+class PeriodResult {
+  + HealthState state
+  + Investment investment
+  + double life_enjoyment
+}
+
+abstract class Harvest {
+  + bool InRange(int period) const
+  + int GetHarvest(HealthState state) const
+  + int GetWorkingHarvest(HealthState state) const
+}
+
+#+end_src
+
+#+RESULTS:
+[[file:healthcare_uml.png]]
