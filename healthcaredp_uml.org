@@ -1,6 +1,6 @@
-#+begin_src plantuml :file hcdp_uml.png
+#+begin_src plantuml :file healthcaredp_uml.png
 
-3package "healthcare" {
+package "healthcare" {
 class HealthState
 class PeriodResult
 class PeriodResultFactory

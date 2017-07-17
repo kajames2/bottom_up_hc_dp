@@ -1,4 +1,4 @@
-#+begin_src plantuml :file hcdp_uml.png
+#+begin_src plantuml :file genericdp_uml.png
 
 package "genericdp" {
   DP ..> DPStorage

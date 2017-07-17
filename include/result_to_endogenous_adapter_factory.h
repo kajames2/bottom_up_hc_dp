@@ -9,14 +9,15 @@
 namespace healthcaredp {
 class ResultToEndogenousAdapterFactory {
 public:
-  ResultToEndogenousAdapterFactory(
-      std::unique_ptr<healthcare::PeriodResultFactory> result_fact);
-  std::unique_ptr<ResultToEndogenousAdapter>
+  ResultToEndogenousAdapterFactory(healthcare::PeriodResultFactory result_fact);
+  ResultToEndogenousAdapter
   GetEndogenousResult(const healthcare::HealthState &state,
                       const healthcare::Investment &investment) const;
+  int GetHealthRegained(const healthcare::HealthState &state,
+                        const healthcare::Investment &investment) const;
 
 private:
-  std::unique_ptr<healthcare::PeriodResultFactory> result_fact_;
+  healthcare::PeriodResultFactory result_fact_;
 };
 } // namespace healthcaredp
 #endif // _RESULT_TO_ENDOGENOUS_ADAPTER_FACTORY_H_

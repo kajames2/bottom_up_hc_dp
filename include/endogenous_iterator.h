@@ -12,17 +12,17 @@ template <class T> class EndogenousIterator:
 public:
   using Endog = EndogenousState<T>;
   using Exog = ExogenousState<T>;
-  using reference = std::shared_ptr<Endog> const&;
-  using pointer = std::shared_ptr<Endog> const*;
+  using reference = Endog const&;
+  using pointer = Endog const*;
   
   EndogenousIterator(): done_(false) {}
 
   explicit operator bool() const { return !done_; }
-  reference operator*() const { return state_; }
-  pointer operator->() const { return &state_; }
+  reference operator*() const { return *state_; }
+  pointer operator->() const { return &(*state_); }
 
   virtual EndogenousIterator<T>& operator++() = 0;
-
+  virtual ~EndogenousIterator() {}
 protected:
   EndogenousIterator(const Exog& state) : state_(), done_(false) {}
   bool done_;

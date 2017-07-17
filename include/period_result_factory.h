@@ -11,8 +11,8 @@
 namespace healthcare {
 class PeriodResultFactory {
 public:
-  PeriodResultFactory(std::unique_ptr<const Regeneration> regeneration,
-                      std::unique_ptr<const Consumption> consumption);
+  PeriodResultFactory(std::shared_ptr<const Regeneration> regeneration,
+                      std::shared_ptr<const Consumption> consumption);
   PeriodResult GetPeriodResult(const HealthState &state,
                                const Investment &investment) const;
   HealthState GetPostInvestmentState(const HealthState &state,
@@ -28,8 +28,8 @@ private:
   int GetCashAtEnd(const HealthState &state,
                    const Investment &investment) const;
 
-  std::unique_ptr<const Regeneration> regeneration_;
-  std::unique_ptr<const Consumption> consumption_;
+  std::shared_ptr<const Regeneration> regeneration_;
+  std::shared_ptr<const Consumption> consumption_;
 };
 } // namespace healthcare
 #endif // _PERIOD_RESULT_FACTORY_H_

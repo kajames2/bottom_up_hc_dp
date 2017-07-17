@@ -24,10 +24,16 @@ protected:
   std::unique_ptr<genericdp::EndogenousState<healthcare::HealthState>> end_state_;
 };
 
-TEST_F(ResultToEndogenousAdapterTest, GetState) {
+TEST_F(ResultToEndogenousAdapterTest, GetStateTest) {
   ASSERT_EQ(state_, end_state_->GetState());
 }
 
-TEST_F(ResultToEndogenousAdapterTest, GetValue) {
+TEST_F(ResultToEndogenousAdapterTest, GetValueTest) {
   ASSERT_EQ(life_enjoyment_, end_state_->GetValue());
+}
+
+TEST_F(ResultToEndogenousAdapterTest, CloneTest) {
+  std::shared_ptr<genericdp::EndogenousState<healthcare::HealthState>> copy = end_state_->Clone();
+  ASSERT_EQ(end_state_->GetState(), copy->GetState());
+  ASSERT_EQ(end_state_->GetValue(), copy->GetValue());
 }

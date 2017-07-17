@@ -6,6 +6,7 @@ namespace healthcare {
 class Degeneration {
 public:
   virtual int GetDegeneration(int period) const = 0;
+  virtual ~Degeneration() {}
 };
 
 } // namespace healthcare

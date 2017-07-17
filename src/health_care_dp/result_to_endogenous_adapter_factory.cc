@@ -6,15 +6,22 @@
 #include <memory>
 
 namespace healthcaredp {
+
 ResultToEndogenousAdapterFactory::ResultToEndogenousAdapterFactory(
-    std::unique_ptr<healthcare::PeriodResultFactory> result_fact)
-    : result_fact_(std::move(result_fact)) {}
-std::unique_ptr<ResultToEndogenousAdapter>
-ResultToEndogenousAdapterFactory::GetEndogenousResult(
+    healthcare::PeriodResultFactory result_fact)
+    : result_fact_(result_fact) {}
+
+ResultToEndogenousAdapter ResultToEndogenousAdapterFactory::GetEndogenousResult(
     const healthcare::HealthState &state,
     const healthcare::Investment &investment) const {
   healthcare::PeriodResult result =
-      result_fact_->GetPeriodResult(state, investment);
-  return std::make_unique<ResultToEndogenousAdapter>(result);
+      result_fact_.GetPeriodResult(state, investment);
+  return ResultToEndogenousAdapter(result);
+}
+
+int ResultToEndogenousAdapterFactory::GetHealthRegained(
+    const healthcare::HealthState &state,
+    const healthcare::Investment &investment) const {
+  return result_fact_.GetHealthRegained(state, investment);
 }
 } // namespace healthcaredp

@@ -17,7 +17,7 @@ public:
   pointer operator->() const { return &state_; }
 
   virtual StateIterator<T>& operator++() = 0;
-
+  virtual ~StateIterator() {}
 protected:
   StateIterator(T state) : state_(state), done_(false) {}
   bool done_;

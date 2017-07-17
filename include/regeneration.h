@@ -6,6 +6,7 @@ namespace healthcare {
 class Regeneration {
  public:
   virtual int GetHealthRegained(int health_investment, int health) const = 0;
+  virtual ~Regeneration() {}
 };
 
 }  // namespace healthcare

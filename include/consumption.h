@@ -6,6 +6,7 @@ namespace healthcare {
 class Consumption {
  public:
   virtual double GetLifeEnjoyment(int life_investment, int health) const = 0;
+  virtual ~Consumption() {}
 };
 
 }  // namespace healthcare

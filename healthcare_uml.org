@@ -1,4 +1,4 @@
-#+begin_src plantuml :file hcdp_uml.png
+#+begin_src plantuml :file healthcare_uml.png
 
 package "healthcare"{
   Harvest ..> HealthState
