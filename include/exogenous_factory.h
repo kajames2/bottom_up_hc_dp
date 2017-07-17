@@ -3,10 +3,12 @@
 
 #include "exogenous_state.h"
 
+#include <memory>
+
 namespace genericdp {
 template <class T> class ExogenousFactory {
 public:
-  virtual ExogenousState<T> GetExogenous(T state) = 0;
+  virtual std::shared_ptr<ExogenousState<T>> GetExogenous(const T& state) const = 0;
 };
 } // namespace genericdp
 #endif // _EXOGENOUS_FACTORY_H_

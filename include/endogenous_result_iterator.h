@@ -16,7 +16,7 @@ class EndogenousResultIterator
 public:
   EndogenousResultIterator(
       const ResultToEndogenousAdapterFactory& state_factory,
-      const genericdp::ExogenousState<healthcare::HealthState> &state,
+      const healthcare::HealthState &state,
       int max_remaining_cash = 0);
   virtual EndogenousResultIterator &operator++() override;
 private:

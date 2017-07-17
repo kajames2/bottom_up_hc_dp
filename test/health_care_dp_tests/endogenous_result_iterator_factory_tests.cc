@@ -1,7 +1,7 @@
 #include "endogenous_result_iterator_factory.h"
 #include "consumption.h"
 #include "endogenous_result_iterator.h"
-#include "exogenous_health_state.h"
+#include "health_state_to_exogenous_adapter.h"
 #include "health_state.h"
 #include "investment.h"
 #include "period_result_factory.h"
@@ -13,9 +13,9 @@
 #include <gtest/gtest.h>
 #include <memory>
 
-class PeriodResultIteratorFactoryTest : public ::testing::Test {
+class EndogenousResultIteratorFactoryTest : public ::testing::Test {
 public:
-  PeriodResultIteratorFactoryTest() {}
+  EndogenousResultIteratorFactoryTest() {}
 
 protected:
   class MockConsumption : public healthcare::Consumption {
@@ -36,8 +36,8 @@ protected:
 
   virtual void SetUp() {
     max_remaining_cash_ = 15;
-    state_ = healthcare::HealthState(1, 50, 50, 10);
-    healthcaredp::ExogenousHealthState exog_state(state_);
+    healthcare::HealthState state(1, 50, 50, 10);
+    exog_state_ = std::make_unique<healthcaredp::HealthStateToExogenousAdapter>(state);
     std::shared_ptr<const MockRegeneration> regen =
         std::make_shared<const MockRegeneration>();
     std::shared_ptr<const MockConsumption> consumption =
@@ -54,19 +54,18 @@ protected:
   }
 
   int max_remaining_cash_;
-  healthcare::HealthState state_;
+  std::unique_ptr<genericdp::ExogenousState<healthcare::HealthState>> exog_state_;
   std::unique_ptr<healthcaredp::EndogenousResultIteratorFactory>
       end_it_factory_;
   std::unique_ptr<healthcaredp::EndogenousResultIteratorFactory>
       end_it_factory_short_;
 };
 
-TEST_F(PeriodResultIteratorFactoryTest, CorrectNumIts) {
-  healthcaredp::EndogenousResultIterator it = end_it_factory_->GetEndogenousIterator(state_);
-  healthcaredp::EndogenousResultIterator it_short = end_it_factory_short_->GetEndogenousIterator(state_);
+TEST_F(EndogenousResultIteratorFactoryTest, CorrectNumIts) {
+  healthcaredp::EndogenousResultIterator it = end_it_factory_->GetEndogenousIterator(*exog_state_);
+  healthcaredp::EndogenousResultIterator it_short = end_it_factory_short_->GetEndogenousIterator(*exog_state_);
   
   int count = 0;
-  //  ASSERT_EQ((*it)->GetState(), (*it_short)->GetState());
   while (it && it_short) {
     ++it;
     ++it_short;
@@ -74,8 +73,8 @@ TEST_F(PeriodResultIteratorFactoryTest, CorrectNumIts) {
   }
 
   int expected_count = 0;
-  for (int hi = 0; hi <= state_.cash; hi += 10) {
-    expected_count += std::min(state_.cash - hi + 1, max_remaining_cash_ + 1);
+  for (int hi = 0; hi <= exog_state_->GetState().cash; hi += 10) {
+    expected_count += std::min(exog_state_->GetState().cash - hi + 1, max_remaining_cash_ + 1);
   }
   ASSERT_EQ(false, it || it_short);
   ASSERT_EQ(expected_count, count);

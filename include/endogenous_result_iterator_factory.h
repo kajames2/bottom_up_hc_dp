@@ -3,8 +3,8 @@
 
 #include "consumption.h"
 #include "endogenous_result_iterator.h"
-#include "exogenous_health_state.h"
 #include "health_state.h"
+#include "health_state_to_exogenous_adapter.h"
 #include "regeneration.h"
 #include "result_to_endogenous_adapter_factory.h"
 
@@ -20,8 +20,8 @@ public:
   EndogenousResultIteratorFactory(
       const ResultToEndogenousAdapterFactory &state_factory,
       int max_remaining_cash = 0);
-  EndogenousResultIterator
-  GetEndogenousIterator(ExogenousHealthState state) const;
+  EndogenousResultIterator GetEndogenousIterator(
+      const genericdp::ExogenousState<healthcare::HealthState> &state) const;
 
 private:
   ResultToEndogenousAdapterFactory state_factory_;

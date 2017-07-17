@@ -6,37 +6,39 @@
 #include <gtest/gtest.h>
 #include <memory>
 
-class MockDegeneration : public healthcare::Degeneration {
-public:
-  MockDegeneration() {}
-  virtual int GetDegeneration(int period) const override { return 5 * period; }
-};
-
-class MockHarvest : public healthcare::Harvest {
-public:
-  MockHarvest() {}
-  virtual int
-  CalculateHarvest(const healthcare::HealthState &state) const override {
-    return state.period * 40;
-  }
-  virtual bool InRange(int period) const override { return true; }
-};
-
 class HealthInvestmentStateFactoryTest : public ::testing::Test {
 public:
   HealthInvestmentStateFactoryTest() {}
 
 protected:
+  class MockDegeneration : public healthcare::Degeneration {
+  public:
+    MockDegeneration() {}
+    virtual int GetDegeneration(int period) const override {
+      return 5 * period;
+    }
+  };
+
+  class MockHarvest : public healthcare::Harvest {
+  public:
+    MockHarvest() {}
+    virtual int
+    CalculateHarvest(const healthcare::HealthState &state) const override {
+      return state.period * 40;
+    }
+    virtual bool InRange(int period) const override { return true; }
+  };
+
   virtual void SetUp() {
     dead_state_ = healthcare::HealthState(2, 0, 50, 20);
     alive_state_ = healthcare::HealthState(1, 50, 45, 10);
     will_die_state_ = healthcare::HealthState(10, 40, 20, 50);
-    std::unique_ptr<const MockHarvest> harvest =
-        std::make_unique<const MockHarvest>();
-    std::unique_ptr<const MockDegeneration> degen =
-        std::make_unique<const MockDegeneration>();
-    fact_ = std::make_unique<healthcare::HealthInvestmentStateFactory>(
-        std::move(harvest), std::move(degen));
+    std::shared_ptr<const MockHarvest> harvest =
+        std::make_shared<const MockHarvest>();
+    std::shared_ptr<const MockDegeneration> degen =
+        std::make_shared<const MockDegeneration>();
+    fact_ = std::make_unique<healthcare::HealthInvestmentStateFactory>(harvest,
+                                                                       degen);
   }
   healthcare::HealthState dead_state_;
   healthcare::HealthState alive_state_;

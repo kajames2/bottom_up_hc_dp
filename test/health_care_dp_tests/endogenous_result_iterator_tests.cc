@@ -5,7 +5,6 @@
 #include "regeneration.h"
 #include "result_to_endogenous_adapter_factory.h"
 #include "endogenous_result_iterator.h"
-#include "exogenous_health_state.h"
 
 #include <algorithm>
 #include <cmath>
@@ -36,7 +35,6 @@ protected:
   virtual void SetUp() {
     max_remaining_cash_ = 15;
     state_ = healthcare::HealthState(1, 50, 50, 10);
-    healthcaredp::ExogenousHealthState exog_state(state_);
     std::shared_ptr<const MockRegeneration> regen =
         std::make_shared<const MockRegeneration>();
     std::shared_ptr<const MockConsumption> consumption =
@@ -44,7 +42,7 @@ protected:
     healthcare::PeriodResultFactory fact =
         healthcare::PeriodResultFactory(regen, consumption);
     healthcaredp::ResultToEndogenousAdapterFactory end_factory(fact);
-    end_it_ = std::make_unique<healthcaredp::EndogenousResultIterator>(fact, exog_state, max_remaining_cash_);
+    end_it_ = std::make_unique<healthcaredp::EndogenousResultIterator>(fact, state_, max_remaining_cash_);
   }
 
   int max_remaining_cash_;

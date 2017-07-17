@@ -11,8 +11,8 @@ namespace healthcare {
 class HealthInvestmentStateFactory {
 public:
   HealthInvestmentStateFactory(
-      std::unique_ptr<const Harvest> harvest,
-      std::unique_ptr<const Degeneration> degeneration);
+      std::shared_ptr<const Harvest> harvest,
+      std::shared_ptr<const Degeneration> degeneration);
   HealthState GetInvestmentState(const HealthState &state) const;
   int GetDegeneration(const HealthState &state) const;
   int GetHarvest(const HealthState &state) const;
@@ -23,8 +23,8 @@ private:
   int GetCashAtInvestment(const HealthState &state) const;
   int GetTotalWorkingHarvest(const HealthState &state) const;
 
-  std::unique_ptr<const Harvest> harvest_;
-  std::unique_ptr<const Degeneration> degeneration_;
+  std::shared_ptr<const Harvest> harvest_;
+  std::shared_ptr<const Degeneration> degeneration_;
 };
 } // namespace healthcare
 #endif // _HEALTH_INVESTMENT_STATE_FACTORY_H_

@@ -10,10 +10,10 @@
 namespace healthcaredp {
 EndogenousResultIterator::EndogenousResultIterator(
     const ResultToEndogenousAdapterFactory& state_factory,
-    const genericdp::ExogenousState<healthcare::HealthState> &state, int max_remaining_cash)
+    const healthcare::HealthState &state, int max_remaining_cash)
     : state_factory_(state_factory)
-    , invest_state_(state.GetState())
-    , available_cash_(state.GetState().cash)
+    , invest_state_(state)
+    , available_cash_(state.cash)
     , cur_investment_(0, 0)
     , prev_health_regained_(0)
     , max_remaining_cash_(max_remaining_cash) {

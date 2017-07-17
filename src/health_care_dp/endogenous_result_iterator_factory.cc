@@ -1,5 +1,6 @@
 #include "endogenous_result_iterator_factory.h"
-#include "exogenous_health_state.h"
+#include "exogenous_state.h"
+#include "health_state.h"
 #include "period_result_factory.h"
 
 #include <memory>
@@ -18,7 +19,7 @@ EndogenousResultIteratorFactory::EndogenousResultIteratorFactory(
     : state_factory_(state_factory), max_remaining_cash_(max_remaining_cash) {}
 
 EndogenousResultIterator EndogenousResultIteratorFactory::GetEndogenousIterator(
-    ExogenousHealthState state) const {
-  return EndogenousResultIterator(state_factory_, state, max_remaining_cash_);
+    const genericdp::ExogenousState<healthcare::HealthState>& state) const {
+  return EndogenousResultIterator(state_factory_, state.GetState(), max_remaining_cash_);
 }
 } // namespace healthcaredp
