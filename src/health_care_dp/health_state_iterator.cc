@@ -5,7 +5,7 @@ HealthStateIterator::HealthStateIterator(int max_periods,
                                          int max_remaining_cash)
     : max_periods_(max_periods)
     , max_remaining_cash_(max_remaining_cash) {
-  state_ = healthcare::HealthState(1, 0, 0, 0);
+  state_ = healthcare::HealthState(max_periods, 0, 0, 0);
 }
 
 HealthStateIterator &HealthStateIterator::operator++() {
@@ -21,8 +21,8 @@ HealthStateIterator &HealthStateIterator::operator++() {
   }
   state_.health = 0;
 
-  if (state_.period < max_periods_) {
-    ++state_.period;
+  if (state_.period > 1) {
+    --state_.period;
     return *this;
   }
 
