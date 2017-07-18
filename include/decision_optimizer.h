@@ -12,7 +12,7 @@ template <class T> class DecisionOptimizer {
 public:
   DecisionOptimizer(std::unique_ptr<const EndogenousIteratorFactory<T>> fact,
                     double discount_rate);
-  std::pair<std::shared_ptr<const EndogenousState<T>>, double>
+  std::pair<std::unique_ptr<const EndogenousState<T>>, double>
   FindOptimal(const ExogenousState<T> &int_state,
               const DPStorage<T> &storage) const;
 
@@ -31,20 +31,21 @@ DecisionOptimizer<T>::DecisionOptimizer(
     : fact_(std::move(fact)), discount_rate_(discount_rate) {}
 
 template <class T>
-std::pair<std::shared_ptr<const EndogenousState<T>>, double>
+std::pair<std::unique_ptr<const EndogenousState<T>>, double>
 DecisionOptimizer<T>::FindOptimal(const ExogenousState<T> &int_state,
                                   const DPStorage<T> &storage) const {
-  EndogenousIterator<T> &end_it = *(fact_->GetIterator(int_state));
-  std::shared_ptr<EndogenousState<T>> opt_state = end_it->Clone();
-  double opt_value = CalculateValue(*end_it, storage);
-  while (++end_it) {
-    double cur_value = CalculateValue(*end_it, storage);
+  auto end_it_ptr = fact_->GetIterator(int_state);
+  EndogenousIterator<T>& end_it_ref = *end_it_ptr;
+  auto opt_state = end_it_ref->Clone();
+  double opt_value = CalculateValue(*end_it_ref, storage);
+  while (++end_it_ref) {
+    double cur_value = CalculateValue(*end_it_ref, storage);
     if (cur_value > opt_value) {
-      opt_state = end_it->Clone();
+      opt_state = end_it_ref->Clone();
       opt_value = cur_value;
     }
   }
-  return std::make_pair(opt_state, opt_value);
+  return std::make_pair(std::move(opt_state), opt_value);
 }
 
 template <class T>

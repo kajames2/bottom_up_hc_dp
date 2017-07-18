@@ -1,6 +1,8 @@
 #ifndef _HEALTH_STATE_H_
 #define _HEALTH_STATE_H_
 
+#include <ostream>
+
 namespace healthcare {
 struct HealthState {
   HealthState() {}

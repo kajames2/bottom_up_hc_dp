@@ -16,17 +16,18 @@ public:
   using HS = healthcare::HealthState;
 
   HealthDPStorage(int max_periods, int max_remaining_cash);
-  virtual const genericdp::EndogenousState<healthcare::HealthState> &
+  virtual std::shared_ptr<const genericdp::EndogenousState<healthcare::HealthState>>
   GetOptimalDecision(const HS &state) const override;
   virtual double GetOptimalValue(const HS &state) const override;
   virtual bool IsTerminalState(const HS &state) const override;
   virtual void StoreOptimalDecision(
       const HS &state,
-      const genericdp::EndogenousState<HS> &end_state) override;
+      std::unique_ptr<const genericdp::EndogenousState<HS>> end_state) override;
   virtual void StoreOptimalValue(const HS &state, double value) override;
 
 private:
-  vector3d<std::unique_ptr<genericdp::EndogenousState<healthcare::HealthState>>>
+  vector3d<std::shared_ptr<
+      const genericdp::EndogenousState<healthcare::HealthState>>>
       state_table_;
   vector3d<double> value_table_;
   int max_periods_;
