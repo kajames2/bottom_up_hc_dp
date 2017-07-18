@@ -1,71 +1,44 @@
-#include <fstream>
-#include <iostream>
-#include <vector>
-#include <string>
+#include "decision_optimizer.h"
+#include "dp.h"
+#include "endogenous_result_iterator_factory.h"
+#include "flat_harvest.h"
+#include "health_dp_storage.h"
+#include "health_state_iterator.h"
+#include "health_state_to_exogenous_adapter_factory.h"
+#include "increasing_decay_consumption.h"
+#include "linear_degeneration.h"
+#include "logistic_regeneration.h"
 
-#include "generic_dp.h"
-#include "health_care_dp_state.h"
-#include "linear_harvest_strategy.h"
-#include "tiered_harvest_strategy.h"
-#include "linear_degeneration_strategy.h"
-#include "logrithmic_regeneration_strategy.h"
-#include "logrithmic_consumption_strategy.h"
-#include "fractional_retirement_strategy.h"
-
-using genericdp::GenericDP;
-using healthcaredp::HealthCareDPState;
+#include <memory>
 
 int main() {
-  std::string filename = "22110_9.csv";
-  int param_periods = 9;
-  int n_periods = 9;
-  bool tiered = false;
-  int first_tier2_period = 4;
+  int n_periods = 3;
+  int max_remaining_cash = 10;
+  auto harvest =
+      std::make_shared<const healthcare::FlatHarvest>(1, n_periods, 100);
+  auto degen = std::make_shared<const healthcare::LinearDegeneration>(0, 15);
+  auto regen =
+      std::make_shared<const healthcare::LogisticRegeneration>(30, 0.025, 0);
+  auto consume = std::make_shared<const healthcare::IncreasingDecayConsumption>(
+      0.025, 100, 0.5);
 
-  bool retirement = true;
-  int first_retirement_period = 7;
+  std::unique_ptr<const genericdp::ExogenousFactory<healthcare::HealthState>>
+      ex_fact = std::make_unique<
+          const healthcaredp::HealthStateToExogenousAdapterFactory>(harvest,
+                                                                    degen);
+  auto end_fact =
+      std::make_unique<const healthcaredp::EndogenousResultIteratorFactory>(
+          regen, consume);
+  std::unique_ptr<genericdp::DPStorage<healthcare::HealthState>> storage =
+      std::make_unique<healthcaredp::HealthDPStorage>(n_periods,
+                                                      max_remaining_cash);
 
-  int start_health = 100;
-  // int start_health = 93;
+  genericdp::DecisionOptimizer<healthcare::HealthState> dec_opt(
+      std::move(end_fact), 1);
+  healthcaredp::HealthStateIterator state_it(n_periods, max_remaining_cash);
 
-  healthcare::LinearDegenerationStrategy degen(param_periods);
-  healthcare::LogrithmicRegenerationStrategy regen(param_periods);
-  healthcare::LogrithmicConsumptionStrategy consumption(param_periods);
-  healthcare::FractionalRetirementStrategy retire(0.75, first_retirement_period);
+  genericdp::DP<healthcare::HealthState> health_dp(std::move(storage),
+                                                   std::move(ex_fact), dec_opt);
 
-  healthcare::LinearHarvestStrategy harvest1(5.914, param_periods);
-  healthcare::LinearHarvestStrategy harvest2(14.57, param_periods);
-  healthcare::TieredHarvestStrategy tier_harvest(&harvest1, &harvest2, first_tier2_period);
-  healthcare::LinearHarvestStrategy flat_harvest(8.426, param_periods);
-  healthcare::HarvestStrategy* harvest_strat;
-
-  if (tiered) {
-    harvest_strat = &tier_harvest;
-  } else {
-    harvest_strat = &flat_harvest;
-  }
-    
-  int start_period = 0;
-  int start_cash = -1000;
-
-  GenericDP<HealthCareDPState> health_care_dp(1);
-  healthcare::HealthCareState init_health_care_state(start_period, start_health, start_cash, 0, &degen, &regen, &retire, harvest_strat, &consumption, retirement, first_retirement_period);
-
-  HealthCareDPState init_state(start_period, n_periods, &regen, retirement, init_health_care_state);
-  std::cout << init_state.GetExogenousState() << std::endl;
-  std::unique_ptr<genericdp::DPStateIterator<HealthCareDPState>> end_it = init_state.GetEndogenousStates();
-  while(*end_it) {
-    std::cout << **end_it << std::endl;
-    ++(*end_it);
-  }
-  std::cout << init_state.SatisfiesEndCondition() << std::endl;
-
-  healthcaredp::HealthCareDPState dp_state = init_state;
-
-  std::ofstream outfile;
-  outfile.open (filename);
-  health_care_dp.WriteDP(outfile, init_state);
-  outfile.close();
-
-  return 0;
+  health_dp.Train(state_it);
 }

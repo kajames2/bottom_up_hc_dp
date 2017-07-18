@@ -8,7 +8,7 @@ template <class T> class EndogenousState {
 public:
   virtual T GetState() const = 0;
   virtual double GetValue() const = 0;
-  virtual std::shared_ptr<EndogenousState<T>> Clone() const = 0;
+  virtual std::unique_ptr<EndogenousState<T>> Clone() const = 0;
   virtual ~EndogenousState() {}
 };
 } // namespace genericdp

@@ -55,20 +55,20 @@ protected:
 
   int max_remaining_cash_;
   std::unique_ptr<genericdp::ExogenousState<healthcare::HealthState>> exog_state_;
-  std::unique_ptr<healthcaredp::EndogenousResultIteratorFactory>
+  std::unique_ptr<genericdp::EndogenousIteratorFactory<healthcare::HealthState>>
       end_it_factory_;
-  std::unique_ptr<healthcaredp::EndogenousResultIteratorFactory>
+  std::unique_ptr<genericdp::EndogenousIteratorFactory<healthcare::HealthState>>
       end_it_factory_short_;
 };
 
 TEST_F(EndogenousResultIteratorFactoryTest, CorrectNumIts) {
-  healthcaredp::EndogenousResultIterator it = end_it_factory_->GetEndogenousIterator(*exog_state_);
-  healthcaredp::EndogenousResultIterator it_short = end_it_factory_short_->GetEndogenousIterator(*exog_state_);
+  auto it = end_it_factory_->GetIterator(*exog_state_);
+  auto it_short = end_it_factory_short_->GetIterator(*exog_state_);
   
   int count = 0;
-  while (it && it_short) {
-    ++it;
-    ++it_short;
+  while (*it && *it_short) {
+    ++*it;
+    ++*it_short;
     ++count;
   }
 
@@ -76,6 +76,6 @@ TEST_F(EndogenousResultIteratorFactoryTest, CorrectNumIts) {
   for (int hi = 0; hi <= exog_state_->GetState().cash; hi += 10) {
     expected_count += std::min(exog_state_->GetState().cash - hi + 1, max_remaining_cash_ + 1);
   }
-  ASSERT_EQ(false, it || it_short);
+  ASSERT_EQ(false, *it || *it_short);
   ASSERT_EQ(expected_count, count);
 }

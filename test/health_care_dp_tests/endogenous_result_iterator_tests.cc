@@ -11,9 +11,9 @@
 #include <gtest/gtest.h>
 #include <memory>
 
-class PeriodResultIteratorTest : public ::testing::Test {
+class EndogenousResultIteratorTest : public ::testing::Test {
 public:
-  PeriodResultIteratorTest() {}
+  EndogenousResultIteratorTest() {}
 
 protected:
   class MockConsumption : public healthcare::Consumption {
@@ -50,7 +50,7 @@ protected:
   std::unique_ptr<healthcaredp::EndogenousResultIterator> end_it_;
 };
 
-TEST_F(PeriodResultIteratorTest, CorrectNumIts) {
+TEST_F(EndogenousResultIteratorTest, CorrectNumIts) {
   healthcaredp::EndogenousResultIterator it = *end_it_;
   int count = 0;
   while (it) {

@@ -12,11 +12,11 @@ CompositeHarvest::CompositeHarvest()
 }
 
 int CompositeHarvest::CalculateHarvest(const HealthState &state) const {
-  return GetHarvestInRange(state.period)->GetHarvest(state);
+  return GetHarvestInRange(state.period).GetHarvest(state);
 }
 
 int CompositeHarvest::GetWorkingHarvest(const HealthState &state) const {
-    return GetHarvestInRange(state.period)->GetWorkingHarvest(state);
+    return GetHarvestInRange(state.period).GetWorkingHarvest(state);
 }
 
 void CompositeHarvest::AddHarvest(std::shared_ptr<const Harvest> state) {
@@ -31,12 +31,12 @@ bool CompositeHarvest::InRange(int period) const {
   return false;
 }
 
-std::shared_ptr<const Harvest>
+const Harvest&
 CompositeHarvest::GetHarvestInRange(int period) const {
   for (auto strat : harvest_strats_) {
     if (strat->InRange(period))
-      return strat;
+      return *strat;
   }
-  return null_harvest_;
+  return *null_harvest_;
 }
 } // namespace healthcare

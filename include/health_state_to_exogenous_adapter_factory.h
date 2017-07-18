@@ -10,14 +10,14 @@
 
 namespace healthcaredp {
 class HealthStateToExogenousAdapterFactory
-    : genericdp::ExogenousFactory<healthcare::HealthState> {
+    : public genericdp::ExogenousFactory<healthcare::HealthState> {
 public:
   explicit HealthStateToExogenousAdapterFactory(
       healthcare::HealthInvestmentStateFactory investment_fact);
   HealthStateToExogenousAdapterFactory(
       std::shared_ptr<const healthcare::Harvest> harvest,
       std::shared_ptr<const healthcare::Degeneration> degen);
-  virtual std::shared_ptr<genericdp::ExogenousState<healthcare::HealthState>> GetExogenous(const healthcare::HealthState &state) const override;
+  virtual std::unique_ptr<genericdp::ExogenousState<healthcare::HealthState>> GetExogenous(const healthcare::HealthState &state) const override;
 
 private:
   healthcare::HealthInvestmentStateFactory investment_fact_;

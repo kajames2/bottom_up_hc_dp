@@ -11,7 +11,7 @@ public:
   ResultToEndogenousAdapter(healthcare::PeriodResult end_state);
   virtual healthcare::HealthState GetState() const override;
   virtual double GetValue() const override;
-  virtual std::shared_ptr<genericdp::EndogenousState<healthcare::HealthState>> Clone() const override;
+  virtual std::unique_ptr<genericdp::EndogenousState<healthcare::HealthState>> Clone() const override;
 
 private:
   healthcare::PeriodResult end_state_;

@@ -21,7 +21,7 @@ protected:
   int CalculateHarvest(const HealthState &state) const override;
 
 private:
-  std::shared_ptr<const Harvest> GetHarvestInRange(int period) const;
+  const Harvest& GetHarvestInRange(int period) const;
 
   std::vector<std::shared_ptr<const Harvest>> harvest_strats_;
   std::shared_ptr<NullHarvest> null_harvest_;

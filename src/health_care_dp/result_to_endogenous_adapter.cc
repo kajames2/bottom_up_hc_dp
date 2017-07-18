@@ -15,8 +15,8 @@ double ResultToEndogenousAdapter::GetValue() const {
   return end_state_.enjoyment;
 }
 
-std::shared_ptr<genericdp::EndogenousState<healthcare::HealthState>>
+std::unique_ptr<genericdp::EndogenousState<healthcare::HealthState>>
 ResultToEndogenousAdapter::Clone() const {
-  return std::make_shared<ResultToEndogenousAdapter>(*this);
+  return std::make_unique<ResultToEndogenousAdapter>(*this);
 }
 }

@@ -18,8 +18,10 @@ EndogenousResultIteratorFactory::EndogenousResultIteratorFactory(
     int max_remaining_cash)
     : state_factory_(state_factory), max_remaining_cash_(max_remaining_cash) {}
 
-EndogenousResultIterator EndogenousResultIteratorFactory::GetEndogenousIterator(
-    const genericdp::ExogenousState<healthcare::HealthState>& state) const {
-  return EndogenousResultIterator(state_factory_, state.GetState(), max_remaining_cash_);
+std::unique_ptr<genericdp::EndogenousIterator<healthcare::HealthState>>
+EndogenousResultIteratorFactory::GetIterator(
+    const genericdp::ExogenousState<healthcare::HealthState> &state) const {
+  return std::make_unique<EndogenousResultIterator>(state_factory_, state.GetState(),
+                                  max_remaining_cash_);
 }
 } // namespace healthcaredp
