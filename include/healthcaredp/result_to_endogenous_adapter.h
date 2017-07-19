@@ -4,8 +4,6 @@
 #include "endogenous_state.h"
 #include "period_result.h"
 
-#include <ostream>
-
 namespace healthcaredp {
 class ResultToEndogenousAdapter
     : public genericdp::EndogenousState<healthcare::HealthState> {
@@ -15,10 +13,12 @@ public:
   virtual double GetValue() const override;
   virtual std::unique_ptr<genericdp::EndogenousState<healthcare::HealthState>>
   Clone() const override;
+  virtual std::string GetString(std::string delimeter) const override;
+  virtual std::string GetHeader(std::string delimeter) const override;
 
-private:
-  virtual void Print(std::ostream &) const override;
+ private:
   healthcare::PeriodResult end_state_;
+  
 };
 } // namespace healthcaredp
 #endif // _RESULT_TO_ENDOGENOUS_ADAPTER_H_

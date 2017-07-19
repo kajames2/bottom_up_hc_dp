@@ -20,10 +20,29 @@ ResultToEndogenousAdapter::Clone() const {
   return std::make_unique<ResultToEndogenousAdapter>(*this);
 }
 
-void ResultToEndogenousAdapter::Print(std::ostream &os) const {
+std::string
+ResultToEndogenousAdapter::GetHeader(std::string delimeter = ", ") const {
+  return "Period" + delimeter
+      + "Inv. Health" + delimeter
+      + "Inv. Cash" + delimeter
+      + "Health Expenditure" + delimeter
+      + "Life Expenditure" + delimeter
+      + "End Health" + delimeter
+      + "End Cash" + delimeter
+      + "Life Enjoyment";
+}
+
+std::string
+ResultToEndogenousAdapter::GetString(std::string delimeter = ", ") const {
   healthcare::HealthState hstate = end_state_.state;
-  os << end_state_.investment.health_investment << ", "
-     << end_state_.investment.life_investment << ", " << hstate.period << ", "
-     << hstate.health << ", " << hstate.cash << ", " << end_state_.enjoyment;
+  healthcare::HealthState istate = end_state_.investment_state;
+  return std::to_string(istate.period) + delimeter +
+         std::to_string(istate.health) + delimeter +
+         std::to_string(istate.cash) + delimeter +
+         std::to_string(end_state_.investment.health_investment) + delimeter +
+         std::to_string(end_state_.investment.life_investment) + delimeter +
+         std::to_string(hstate.health) + delimeter +
+         std::to_string(hstate.cash) + delimeter +
+         std::to_string(end_state_.enjoyment);
 }
 }

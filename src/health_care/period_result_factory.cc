@@ -19,7 +19,7 @@ PeriodResultFactory::GetPeriodResult(const HealthState &state,
                                      const Investment &investment) const {
   PeriodResult result =
       PeriodResult(GetPostInvestmentState(state, investment), investment,
-                   GetLifeEnjoyment(state, investment));
+                   GetLifeEnjoyment(state, investment), state);
   return result;
 }
 
