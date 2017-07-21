@@ -11,12 +11,12 @@ ResultToEndogenousAdapterFactory::ResultToEndogenousAdapterFactory(
     healthcare::PeriodResultFactory result_fact)
     : result_fact_(result_fact) {}
 
-ResultToEndogenousAdapter ResultToEndogenousAdapterFactory::GetEndogenousResult(
+std::unique_ptr<ResultToEndogenousAdapter> ResultToEndogenousAdapterFactory::GetEndogenousResult(
     const healthcare::HealthState &state,
     const healthcare::Investment &investment) const {
   healthcare::PeriodResult result =
       result_fact_.GetPeriodResult(state, investment);
-  return ResultToEndogenousAdapter(result);
+  return std::make_unique<ResultToEndogenousAdapter>(result);
 }
 
 int ResultToEndogenousAdapterFactory::GetHealthRegained(

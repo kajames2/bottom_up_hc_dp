@@ -22,7 +22,7 @@ public:
 private:
   int NextUniqueHealthInvestment() const;
   bool HasRemainingCash(healthcare::Investment investment) const;
-  std::shared_ptr<ResultToEndogenousAdapter> GetEndogenousResult() const;
+  std::unique_ptr<ResultToEndogenousAdapter> GetEndogenousResult() const;
   int GetHealthRegained(healthcare::Investment investment) const;
 
   int available_cash_;

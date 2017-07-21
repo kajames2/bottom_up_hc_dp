@@ -1,6 +1,7 @@
 #include "health_dp_storage.h"
 #include "endogenous_state.h"
 #include "health_state.h"
+#include <iostream>
 
 namespace healthcaredp {
 HealthDPStorage::HealthDPStorage(int max_periods, int max_remaining_cash)
@@ -20,6 +21,10 @@ HealthDPStorage::HealthDPStorage(int max_periods, int max_remaining_cash)
       subvec.resize(max_remaining_cash_ + 1);
     }
   }
+}
+
+bool HealthDPStorage::IsStoredState(const HS &state) const {
+  return static_cast<bool>(AccessIndex(state_table_, state));
 }
 
 std::unique_ptr<const genericdp::EndogenousState<healthcare::HealthState>>
@@ -48,8 +53,9 @@ void HealthDPStorage::StoreOptimalValue(const HS &state, double value) {
   AccessIndex(value_table_, state) = value;
 }
 
+
 template <class T>
-T &HealthDPStorage::AccessIndex(vector3d<T> &vec,
+T& HealthDPStorage::AccessIndex(vector3d<T> &vec,
                                 const healthcare::HealthState &state) {
   return vec.at(state.period - 1).at(state.health).at(state.cash);
 }

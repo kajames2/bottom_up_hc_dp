@@ -8,17 +8,16 @@ namespace healthcaredp {
 class ResultToEndogenousAdapter
     : public genericdp::EndogenousState<healthcare::HealthState> {
 public:
-  ResultToEndogenousAdapter(healthcare::PeriodResult end_state);
-  virtual healthcare::HealthState GetState() const override;
-  virtual double GetValue() const override;
-  virtual std::unique_ptr<genericdp::EndogenousState<healthcare::HealthState>>
+  explicit ResultToEndogenousAdapter(healthcare::PeriodResult end_state);
+  healthcare::HealthState GetState() const override;
+  double GetValue() const override;
+  std::unique_ptr<genericdp::EndogenousState<healthcare::HealthState>>
   Clone() const override;
-  virtual std::string GetString() const override;
-  virtual std::string GetHeader() const override;
+  std::string GetString() const override;
+  std::string GetHeader() const override;
 
- private:
+private:
   healthcare::PeriodResult end_state_;
-  
 };
 } // namespace healthcaredp
 #endif // _RESULT_TO_ENDOGENOUS_ADAPTER_H_

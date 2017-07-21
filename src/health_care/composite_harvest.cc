@@ -8,7 +8,7 @@
 namespace healthcare {
 CompositeHarvest::CompositeHarvest()
     : harvest_strats_() {
-  null_harvest_ = NullHarvest();
+  null_harvest_ = std::make_unique<NullHarvest>();
 }
 
 int CompositeHarvest::CalculateHarvest(const HealthState &state) const {
@@ -37,6 +37,6 @@ CompositeHarvest::GetHarvestInRange(int period) const {
     if (strat->InRange(period))
       return *strat;
   }
-  return null_harvest_;
+  return *null_harvest_;
 }
 } // namespace healthcare

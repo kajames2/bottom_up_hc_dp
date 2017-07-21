@@ -23,10 +23,9 @@ protected:
 };
 
 TEST_F(HealthStateIteratorTest, CorrectNumIts) {
-  healthcaredp::HealthStateIterator it = *state_it_;
   int count = 0;
-  while (it) {
-    ++it;
+  while (*state_it_) {
+    ++*state_it_;
     ++count;
   }
 

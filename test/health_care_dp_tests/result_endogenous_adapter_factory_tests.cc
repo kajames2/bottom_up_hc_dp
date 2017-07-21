@@ -48,10 +48,9 @@ protected:
 };
 
 TEST_F(ResultToEndogenousAdapterFactoryTest, SameAsPeriodFactoryTest) {
-  healthcaredp::ResultToEndogenousAdapter end_state = adapter_fact_->GetEndogenousResult(state_, investment_);
+  auto end_state = adapter_fact_->GetEndogenousResult(state_, investment_);
   healthcare::PeriodResult end_result = result_fact_->GetPeriodResult(state_, investment_); 
-  ASSERT_EQ(end_result.state, end_state.GetState());
-  ASSERT_EQ(end_result.enjoyment, end_state.GetValue());
+  ASSERT_EQ(end_result.state, end_state->GetState());
+  ASSERT_EQ(end_result.enjoyment, end_state->GetValue());
   ASSERT_EQ(adapter_fact_->GetHealthRegained(state_, investment_), result_fact_->GetHealthRegained(state_, investment_));
 }
-

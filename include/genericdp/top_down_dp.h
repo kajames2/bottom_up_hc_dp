@@ -51,7 +51,7 @@ TopDownDP<T>::TrainGet(const T &state) {
   if (storage_->IsTerminalState(state)) {
     return std::make_pair(nullptr, storage_->GetOptimalValue(state));
   }
-  if (!storage_->GetOptimalDecision(state)) {
+  if (!storage_->IsStoredState(state)) {
     auto ex_state = ex_fact_->GetExogenous(state);
     auto opt_state_value = FindOptimal(*ex_state);
     storage_->StoreOptimalDecision(state, std::move(opt_state_value.first));
@@ -91,7 +91,7 @@ TopDownDP<T>::FindOptimal(const ExogenousState<T> &int_state) {
   while (++end_it_ref) {
     double cur_value = CalculateValue(*end_it_ref);
     if (cur_value > opt_value) {
-      opt_state = end_it_ref->Clone();
+      opt_state = std::move(end_it_ref->Clone());
       opt_value = cur_value;
     }
   }

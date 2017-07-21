@@ -17,32 +17,32 @@ double ResultToEndogenousAdapter::GetValue() const {
 
 std::unique_ptr<genericdp::EndogenousState<healthcare::HealthState>>
 ResultToEndogenousAdapter::Clone() const {
-  return std::make_unique<ResultToEndogenousAdapter>(*this);
+  return std::make_unique<ResultToEndogenousAdapter>(end_state_);
 }
 
 std::string
-ResultToEndogenousAdapter::GetHeader(std::string delimeter = ", ") const {
-  return "Period" + delimeter
-      + "Inv. Health" + delimeter
-      + "Inv. Cash" + delimeter
-      + "Health Expenditure" + delimeter
-      + "Life Expenditure" + delimeter
-      + "End Health" + delimeter
-      + "End Cash" + delimeter
+ResultToEndogenousAdapter::GetHeader() const {
+  return std::string("Period") + ", "
+      + "Inv. Health" + ", "
+      + "Inv. Cash" + ", "
+      + "Health Expenditure" + ", "
+      + "Life Expenditure" + ", "
+      + "End Health" + ", "
+      + "End Cash" + ", "
       + "Life Enjoyment";
 }
 
 std::string
-ResultToEndogenousAdapter::GetString(std::string delimeter = ", ") const {
+ResultToEndogenousAdapter::GetString() const {
   healthcare::HealthState hstate = end_state_.state;
   healthcare::HealthState istate = end_state_.investment_state;
-  return std::to_string(istate.period) + delimeter +
-         std::to_string(istate.health) + delimeter +
-         std::to_string(istate.cash) + delimeter +
-         std::to_string(end_state_.investment.health_investment) + delimeter +
-         std::to_string(end_state_.investment.life_investment) + delimeter +
-         std::to_string(hstate.health) + delimeter +
-         std::to_string(hstate.cash) + delimeter +
+  return std::to_string(istate.period) + ", " +
+         std::to_string(istate.health) + ", " +
+         std::to_string(istate.cash) + ", " +
+         std::to_string(end_state_.investment.health_investment) + ", " +
+         std::to_string(end_state_.investment.life_investment) + ", " +
+         std::to_string(hstate.health) + ", " +
+         std::to_string(hstate.cash) + ", " +
          std::to_string(end_state_.enjoyment);
 }
 }

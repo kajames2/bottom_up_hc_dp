@@ -51,10 +51,9 @@ protected:
 };
 
 TEST_F(EndogenousResultIteratorTest, CorrectNumIts) {
-  healthcaredp::EndogenousResultIterator it = *end_it_;
   int count = 0;
-  while (it) {
-    ++it;
+  while (*end_it_) {
+    ++*end_it_;
     ++count;
   }
 

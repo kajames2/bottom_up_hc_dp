@@ -67,7 +67,7 @@ bool EndogenousResultIterator::HasRemainingCash(
          available_cash_;
 }
 
-std::shared_ptr<ResultToEndogenousAdapter> EndogenousResultIterator::GetEndogenousResult() const {
-  return std::make_shared<ResultToEndogenousAdapter>(state_factory_.GetEndogenousResult(invest_state_, cur_investment_));
+std::unique_ptr<ResultToEndogenousAdapter> EndogenousResultIterator::GetEndogenousResult() const {
+  return state_factory_.GetEndogenousResult(invest_state_, cur_investment_);
 }
 } // namespace healthcaredp
