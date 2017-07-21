@@ -11,9 +11,10 @@ public:
   virtual int GetHarvest(const HealthState& state) const {
     return InRange(state.period) ? CalculateHarvest(state) : 0;
   };
-  virtual ~Harvest() {}
+  Harvest() = default;
   Harvest(const Harvest&) = delete;
   Harvest& operator=(const Harvest&) = delete;
+  virtual ~Harvest() {}
  protected:
   virtual int CalculateHarvest(const HealthState& state) const = 0;
 };

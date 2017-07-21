@@ -21,9 +21,10 @@ public:
   pointer operator->() const { return &(*state_); }
 
   virtual EndogenousIterator<T> &operator++() = 0;
-  virtual ~EndogenousIterator() {}
+
   EndogenousIterator(const EndogenousIterator&) = delete;
   EndogenousIterator& operator=(const EndogenousIterator&) = delete;
+  virtual ~EndogenousIterator() {}
 protected:
   EndogenousIterator(const ExogenousState<T> &state) : state_(), done_(false) {}
   bool done_;

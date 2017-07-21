@@ -13,8 +13,8 @@ public:
   virtual double GetValue() const override;
   virtual std::unique_ptr<genericdp::EndogenousState<healthcare::HealthState>>
   Clone() const override;
-  virtual std::string GetString(std::string delimeter) const override;
-  virtual std::string GetHeader(std::string delimeter) const override;
+  virtual std::string GetString() const override;
+  virtual std::string GetHeader() const override;
 
  private:
   healthcare::PeriodResult end_state_;

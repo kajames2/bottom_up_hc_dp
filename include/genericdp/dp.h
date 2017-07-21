@@ -10,6 +10,7 @@
 #include <memory>
 #include <vector>
 #include <utility>
+#include <iostream>
 
 namespace genericdp {
 template <class T> class DP {

@@ -10,9 +10,11 @@ template <class T> class ExogenousFactory {
 public:
   virtual std::unique_ptr<ExogenousState<T>>
   GetExogenous(const T &state) const = 0;
+
+  ExogenousFactory() = default;
+  ExogenousFactory(const ExogenousFactory<T> &) = delete;
+  ExogenousFactory &operator=(const ExogenousFactory<T> &) = delete;
   virtual ~ExogenousFactory() {}
-  ExogenousFactory(const ExogenousFactory &) = delete;
-  ExogenousFactory &operator=(const ExogenousFactory &) = delete;
 };
 } // namespace genericdp
 #endif // _EXOGENOUS_FACTORY_H_

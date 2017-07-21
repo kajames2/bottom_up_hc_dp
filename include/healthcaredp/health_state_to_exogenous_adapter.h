@@ -8,7 +8,7 @@ namespace healthcaredp {
 class HealthStateToExogenousAdapter
     : public genericdp::ExogenousState<healthcare::HealthState> {
 public:
-  HealthStateToExogenousAdapter(healthcare::HealthState state)
+  explicit HealthStateToExogenousAdapter(healthcare::HealthState state)
       : state_(state) {}
   virtual healthcare::HealthState GetState() const override { return state_; }
 

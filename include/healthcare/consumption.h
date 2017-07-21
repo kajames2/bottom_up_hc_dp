@@ -6,9 +6,10 @@ namespace healthcare {
 class Consumption {
  public:
   virtual double GetLifeEnjoyment(int life_investment, int health) const = 0;
-  virtual ~Consumption() {}
+  Consumption() = default;
   Consumption(const Consumption&) = delete;
   Consumption& operator=(const Consumption&) = delete;
+  virtual ~Consumption() {}
 };
 
 }  // namespace healthcare

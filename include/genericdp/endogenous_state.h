@@ -10,7 +10,6 @@ public:
   virtual T GetState() const = 0;
   virtual double GetValue() const = 0;
   virtual std::unique_ptr<EndogenousState<T>> Clone() const = 0;
-  virtual ~EndogenousState() {}
 
   virtual std::string GetString() const = 0;
   virtual std::string GetHeader() const = 0;
@@ -20,8 +19,10 @@ public:
     out << b.GetString();
     return out;
   }
+  EndogenousState() = default;
   EndogenousState(const EndogenousState&) = delete;
   EndogenousState& operator=(const EndogenousState&) = delete;
+  virtual ~EndogenousState() {}
  private:
 
 };
