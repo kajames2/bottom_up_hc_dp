@@ -1,4 +1,6 @@
--Iinclude
+-Iinclude/healthcare
+-Iinclude/healthcaredp
+-Iinclude/genericdp
 -lgtest
 -lgtest_main
 -lpthread

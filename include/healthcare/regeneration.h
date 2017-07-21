@@ -7,6 +7,8 @@ class Regeneration {
  public:
   virtual int GetHealthRegained(int health_investment, int health) const = 0;
   virtual ~Regeneration() {}
+  Regeneration(const Regeneration&) = delete;
+  Regeneration& operator=(const Regeneration&) = delete;
 };
 
 }  // namespace healthcare

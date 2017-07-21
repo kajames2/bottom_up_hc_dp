@@ -7,6 +7,8 @@ class Consumption {
  public:
   virtual double GetLifeEnjoyment(int life_investment, int health) const = 0;
   virtual ~Consumption() {}
+  Consumption(const Consumption&) = delete;
+  Consumption& operator=(const Consumption&) = delete;
 };
 
 }  // namespace healthcare

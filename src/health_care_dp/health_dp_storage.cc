@@ -6,32 +6,32 @@ namespace healthcaredp {
 HealthDPStorage::HealthDPStorage(int max_periods, int max_remaining_cash)
     : max_periods_(max_periods), max_remaining_cash_(max_remaining_cash) {
   value_table_.resize(max_periods_);
-  for (auto& vec : value_table_) {
+  for (auto &vec : value_table_) {
     vec.resize(100 + 1);
-    for (auto& subvec : vec) {
+    for (auto &subvec : vec) {
       subvec.resize(max_remaining_cash_ + 1);
     }
   }
-  
+
   state_table_.resize(max_periods_);
-  for (auto& vec : state_table_) {
+  for (auto &vec : state_table_) {
     vec.resize(100 + 1);
-    for (auto& subvec : vec) {
+    for (auto &subvec : vec) {
       subvec.resize(max_remaining_cash_ + 1);
     }
   }
 }
 
-std::shared_ptr<const genericdp::EndogenousState<healthcare::HealthState>>
+std::unique_ptr<const genericdp::EndogenousState<healthcare::HealthState>>
 HealthDPStorage::GetOptimalDecision(const HS &state) const {
-  return state_table_[state.period-1][state.health][state.cash];
+  return AccessIndex(state_table_, state)->Clone();
 }
 
 double HealthDPStorage::GetOptimalValue(const HS &state) const {
   if (IsTerminalState(state)) {
     return 0;
   }
-  return value_table_[state.period-1][state.health][state.cash];
+  return AccessIndex(value_table_, state);
 }
 
 bool HealthDPStorage::IsTerminalState(const HS &state) const {
@@ -39,11 +39,24 @@ bool HealthDPStorage::IsTerminalState(const HS &state) const {
 }
 
 void HealthDPStorage::StoreOptimalDecision(
-    const HS &state, std::unique_ptr<const genericdp::EndogenousState<HS>> end_state) {
-  state_table_[state.period-1][state.health][state.cash] = std::move(end_state);
+    const HS &state,
+    std::unique_ptr<const genericdp::EndogenousState<HS>> end_state) {
+  AccessIndex(state_table_, state) = std::move(end_state);
 }
 
 void HealthDPStorage::StoreOptimalValue(const HS &state, double value) {
-  value_table_[state.period-1][state.health][state.cash] = value;
+  AccessIndex(value_table_, state) = value;
+}
+
+template <class T>
+T &HealthDPStorage::AccessIndex(vector3d<T> &vec,
+                                const healthcare::HealthState &state) {
+  return vec.at(state.period - 1).at(state.health).at(state.cash);
+}
+
+template <class T>
+const T & HealthDPStorage::AccessIndex(const vector3d<T> &vec,
+                             const healthcare::HealthState &state) const {
+  return vec.at(state.period - 1).at(state.health).at(state.cash);
 }
 }

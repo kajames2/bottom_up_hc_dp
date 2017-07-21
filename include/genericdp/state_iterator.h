@@ -18,7 +18,8 @@ public:
 
   virtual StateIterator<T> &operator++() = 0;
   virtual ~StateIterator() {}
-
+  StateIterator(const StateIterator&) = delete;
+  StateIterator& operator=(const StateIterator&) = delete;
 protected:
   StateIterator(T state) : state_(state), done_(false) {}
   bool done_;

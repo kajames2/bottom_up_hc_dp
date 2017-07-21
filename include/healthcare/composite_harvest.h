@@ -24,7 +24,7 @@ private:
   const Harvest& GetHarvestInRange(int period) const;
 
   std::vector<std::shared_ptr<const Harvest>> harvest_strats_;
-  std::shared_ptr<NullHarvest> null_harvest_;
+  NullHarvest null_harvest_;
 };
 } // namespace healthcare
 #endif // _COMPOSITE_HARVEST_H_

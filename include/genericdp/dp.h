@@ -18,7 +18,7 @@ public:
      std::unique_ptr<const ExogenousFactory<T>> ex_fact,
      DecisionOptimizer<T> &decision_maker);
   void Train(StateIterator<T> &it);
-  std::vector<std::pair<std::shared_ptr<const EndogenousState<T>>, double>>
+  std::vector<std::pair<std::unique_ptr<const EndogenousState<T>>, double>>
   GetSolution(T init_state) const;
 
 private:
@@ -44,7 +44,7 @@ template <class T> void DP<T>::Train(StateIterator<T> &state_it) {
 }
 
 template <class T>
-std::vector<std::pair<std::shared_ptr<const EndogenousState<T>>, double>>
+std::vector<std::pair<std::unique_ptr<const EndogenousState<T>>, double>>
 DP<T>::GetSolution(T init_state) const {
   std::vector<std::pair<std::shared_ptr<const EndogenousState<T>>, double>> solution;
   T cur_state = init_state;

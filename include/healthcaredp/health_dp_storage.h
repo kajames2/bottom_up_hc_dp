@@ -16,7 +16,8 @@ public:
   using HS = healthcare::HealthState;
 
   HealthDPStorage(int max_periods, int max_remaining_cash);
-  virtual std::shared_ptr<const genericdp::EndogenousState<healthcare::HealthState>>
+  virtual std::unique_ptr<
+      const genericdp::EndogenousState<healthcare::HealthState>>
   GetOptimalDecision(const HS &state) const override;
   virtual double GetOptimalValue(const HS &state) const override;
   virtual bool IsTerminalState(const HS &state) const override;
@@ -26,7 +27,9 @@ public:
   virtual void StoreOptimalValue(const HS &state, double value) override;
 
 private:
-  vector3d<std::shared_ptr<
+  template <class T> T& AccessIndex(vector3d<T> &vec, const HS &state);
+  template <class T> const T &AccessIndex(const vector3d<T> &vec, const HS &state) const;  
+  vector3d<std::unique_ptr<
       const genericdp::EndogenousState<healthcare::HealthState>>>
       state_table_;
   vector3d<double> value_table_;

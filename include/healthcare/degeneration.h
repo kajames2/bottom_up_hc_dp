@@ -7,6 +7,8 @@ class Degeneration {
 public:
   virtual int GetDegeneration(int period) const = 0;
   virtual ~Degeneration() {}
+  Degeneration(const Degeneration&) = delete;
+  Degeneration& operator=(const Degeneration&) = delete;
 };
 
 } // namespace healthcare

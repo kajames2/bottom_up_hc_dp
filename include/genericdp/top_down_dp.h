@@ -6,6 +6,8 @@
 #include "endogenous_state.h"
 #include "exogenous_factory.h"
 
+#include <exception>
+#include <iostream>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -22,8 +24,10 @@ public:
             double discount_rate);
   std::vector<StateValue> GetSolution(const T &init_state);
   StateValue TrainGet(const T &init_state);
+
 private:
-  std::pair<std::unique_ptr<const EndogenousState<T>>, double> FindOptimal(const ExogenousState<T> &int_state);
+  std::pair<std::unique_ptr<const EndogenousState<T>>, double>
+  FindOptimal(const ExogenousState<T> &int_state);
   double CalculateValue(const EndogenousState<T> &end_state);
 
   std::unique_ptr<DPStorage<T>> storage_;
@@ -54,7 +58,8 @@ TopDownDP<T>::TrainGet(const T &state) {
     storage_->StoreOptimalValue(state, opt_state_value.second);
   }
 
-  return std::make_pair(storage_->GetOptimalDecision(state), storage_->GetOptimalValue(state));
+  return std::make_pair(storage_->GetOptimalDecision(state),
+                        storage_->GetOptimalValue(state));
 }
 
 template <class T>
@@ -62,11 +67,17 @@ std::vector<std::pair<std::shared_ptr<const EndogenousState<T>>, double>>
 TopDownDP<T>::GetSolution(const T &init_state) {
   std::vector<StateValue> solution;
   T cur_state = init_state;
-  while (!storage_->IsTerminalState(cur_state)) {
-    auto state_val = TrainGet(cur_state);
-    solution.push_back(state_val);
-    cur_state = state_val.first->GetState();
+  try {
+    while (!storage_->IsTerminalState(cur_state)) {
+      auto state_val = TrainGet(cur_state);
+      solution.push_back(state_val);
+      cur_state = state_val.first->GetState();
+    }
+  } catch (const std::out_of_range &oor) {
+    std::cerr << "A state was out of range for storage." << std::endl
+              << oor.what() << std::endl;
   }
+
   return solution;
 }
 

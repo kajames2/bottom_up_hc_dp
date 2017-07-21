@@ -10,6 +10,9 @@ namespace genericdp {
 template <class T> class EndogenousIteratorFactory {
 public:
   virtual std::unique_ptr<EndogenousIterator<T>> GetIterator(const ExogenousState<T>& input) const = 0;
+  virtual ~EndogenousIteratorFactory() {}
+  EndogenousIteratorFactory(const EndogenousIteratorFactory&) = delete;
+  EndogenousIteratorFactory& operator=(const EndogenousIteratorFactory&) = delete;
 };
 } // namespace genericdp
 #endif // _ENDOGENOUS_ITERATOR_FACTORY_H_

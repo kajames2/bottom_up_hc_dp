@@ -12,15 +12,17 @@ public:
   virtual std::unique_ptr<EndogenousState<T>> Clone() const = 0;
   virtual ~EndogenousState() {}
 
-  virtual std::string GetString(std::string delimeter = ", ") const = 0;
-  virtual std::string GetHeader(std::string delimeter = ", ") const = 0;
+  virtual std::string GetString() const = 0;
+  virtual std::string GetHeader() const = 0;
 
   friend std::ostream &operator<<(std::ostream &out,
                                   const EndogenousState<T> &b) {
     out << b.GetString();
     return out;
   }
-private:
+  EndogenousState(const EndogenousState&) = delete;
+  EndogenousState& operator=(const EndogenousState&) = delete;
+ private:
 
 };
 } // namespace genericdp

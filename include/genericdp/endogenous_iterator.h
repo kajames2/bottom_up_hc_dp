@@ -22,7 +22,8 @@ public:
 
   virtual EndogenousIterator<T> &operator++() = 0;
   virtual ~EndogenousIterator() {}
-
+  EndogenousIterator(const EndogenousIterator&) = delete;
+  EndogenousIterator& operator=(const EndogenousIterator&) = delete;
 protected:
   EndogenousIterator(const ExogenousState<T> &state) : state_(), done_(false) {}
   bool done_;
