@@ -27,9 +27,9 @@ bool HealthDPStorage::IsStoredState(const HS &state) const {
   return static_cast<bool>(AccessIndex(state_table_, state));
 }
 
-std::unique_ptr<const genericdp::EndogenousState<healthcare::HealthState>>
+const genericdp::EndogenousState<healthcare::HealthState>*
 HealthDPStorage::GetOptimalDecision(const HS &state) const {
-  return AccessIndex(state_table_, state)->Clone();
+  return AccessIndex(state_table_, state).get();
 }
 
 double HealthDPStorage::GetOptimalValue(const HS &state) const {

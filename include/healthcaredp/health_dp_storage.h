@@ -16,9 +16,8 @@ public:
   using HS = healthcare::HealthState;
 
   HealthDPStorage(int max_periods, int max_remaining_cash);
-  std::unique_ptr<
-      const genericdp::EndogenousState<healthcare::HealthState>>
-  GetOptimalDecision(const HS &state) const override;
+  
+  const genericdp::EndogenousState<healthcare::HealthState>* GetOptimalDecision(const HS &state) const override;
   double GetOptimalValue(const HS &state) const override;
   bool IsTerminalState(const HS &state) const override;
   bool IsStoredState(const HS &state) const override;

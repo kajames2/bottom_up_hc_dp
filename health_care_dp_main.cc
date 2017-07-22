@@ -20,7 +20,7 @@ int main() {
       std::make_shared<const healthcare::FlatHarvest>(1, n_periods, 100);
   auto degen = std::make_shared<const healthcare::LinearDegeneration>(0, 10);
   auto regen =
-      std::make_shared<const healthcare::ShiftedLogisticRegeneration>(1.021);
+      std::make_shared<const healthcare::ShiftedLogisticRegeneration>(0.01021);
   auto consume = std::make_shared<const healthcare::FractionalConsumption>(32);
 
   std::unique_ptr<const genericdp::ExogenousFactory<healthcare::HealthState>>
@@ -39,9 +39,9 @@ int main() {
   genericdp::TopDownDP<healthcare::HealthState> health_dp(
       std::move(storage), std::move(ex_fact), std::move(end_fact), 1);
 
-  auto solution = health_dp.GetSolution(healthcare::HealthState(1, 100, 0, 0));
+  auto solution = health_dp.GetSolution(healthcare::HealthState(1, 70, 0, 0));
   std::cout << solution[0].first->GetHeader() << ", " << "Total Value" << std::endl;
-  for (auto end_state_value : solution) {
+  for (auto&& end_state_value : solution) {
     std::cout << *end_state_value.first << ", " << end_state_value.second
               << std::endl;
   }

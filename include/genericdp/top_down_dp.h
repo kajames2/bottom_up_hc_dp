@@ -15,15 +15,12 @@
 namespace genericdp {
 template <class T> class TopDownDP {
 public:
-  using StateValue =
-      std::pair<std::shared_ptr<const EndogenousState<T>>, double>;
-
   TopDownDP(std::unique_ptr<DPStorage<T>> storage,
             std::unique_ptr<const ExogenousFactory<T>> ex_fact,
             std::unique_ptr<const EndogenousIteratorFactory<T>> fact,
             double discount_rate);
-  std::vector<StateValue> GetSolution(const T &init_state);
-  StateValue TrainGet(const T &init_state);
+  std::vector<std::pair<std::unique_ptr<EndogenousState<T>>, double>> GetSolution(const T &init_state);
+  std::pair<const EndogenousState<T>*, double> TrainGet(const T &init_state);
 
 private:
   std::pair<std::unique_ptr<const EndogenousState<T>>, double>
@@ -46,7 +43,7 @@ TopDownDP<T>::TopDownDP(
       fact_(std::move(fact)), discount_rate_(discount_rate) {}
 
 template <class T>
-std::pair<std::shared_ptr<const EndogenousState<T>>, double>
+std::pair<const EndogenousState<T>*, double>
 TopDownDP<T>::TrainGet(const T &state) {
   if (storage_->IsTerminalState(state)) {
     return std::make_pair(nullptr, storage_->GetOptimalValue(state));
@@ -63,14 +60,14 @@ TopDownDP<T>::TrainGet(const T &state) {
 }
 
 template <class T>
-std::vector<std::pair<std::shared_ptr<const EndogenousState<T>>, double>>
+std::vector<std::pair<std::unique_ptr<EndogenousState<T>>, double>>
 TopDownDP<T>::GetSolution(const T &init_state) {
-  std::vector<StateValue> solution;
+  std::vector<std::pair<std::unique_ptr<EndogenousState<T>>, double>> solution;
   T cur_state = init_state;
   try {
     while (!storage_->IsTerminalState(cur_state)) {
       auto state_val = TrainGet(cur_state);
-      solution.push_back(state_val);
+      solution.push_back(std::make_pair(state_val.first->Clone(), state_val.second));
       cur_state = state_val.first->GetState();
     }
   } catch (const std::out_of_range &oor) {

@@ -8,7 +8,7 @@
 namespace genericdp {
 template <class T> class DPStorage {
 public:
-  virtual std::unique_ptr<const EndogenousState<T>> GetOptimalDecision(const T& state) const = 0;
+  virtual const EndogenousState<T>* GetOptimalDecision(const T& state) const = 0;
   virtual double GetOptimalValue(const T& state) const = 0;
   virtual bool IsTerminalState(const T& state) const = 0;
   virtual bool IsStoredState(const T& state) const = 0;
