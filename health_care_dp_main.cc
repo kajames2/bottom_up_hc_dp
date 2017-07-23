@@ -8,6 +8,7 @@
 #include "logistic_consumption.h"
 #include "shifted_logistic_regeneration.h"
 #include "top_down_dp.h"
+#include "value_strategy.h"
 
 #include <iostream>
 #include <memory>
@@ -15,7 +16,7 @@
 
 int main() {
   int n_periods = 15;
-  int max_remaining_cash = 20;
+  int max_remaining_cash = 45;
   auto harvest =
       std::make_shared<const healthcare::FlatHarvest>(1, n_periods, 100);
   auto degen = std::make_shared<const healthcare::LinearDegeneration>(0, 10);
@@ -23,25 +24,25 @@ int main() {
       std::make_shared<const healthcare::ShiftedLogisticRegeneration>(0.01021);
   auto consume = std::make_shared<const healthcare::FractionalConsumption>(32);
 
-  std::unique_ptr<const genericdp::ExogenousFactory<healthcare::HealthState>>
-      ex_fact = std::make_unique<
-          const healthcaredp::HealthStateToExogenousAdapterFactory>(harvest,
-                                                                    degen);
-  std::unique_ptr<const healthcaredp::EndogenousResultIteratorFactory>
-      end_fact =
-          std::make_unique<const healthcaredp::EndogenousResultIteratorFactory>(
-              regen, consume, max_remaining_cash);
+  auto ex_fact = std::make_unique<
+      const healthcaredp::HealthStateToExogenousAdapterFactory>(harvest, degen);
+  auto end_fact =
+      std::make_unique<const healthcaredp::EndogenousResultIteratorFactory>(
+          regen, consume, max_remaining_cash);
 
-  std::unique_ptr<genericdp::DPStorage<healthcare::HealthState>> storage =
-      std::make_unique<healthcaredp::HealthDPStorage>(n_periods,
-                                                      max_remaining_cash);
+  auto storage = std::make_unique<healthcaredp::HealthDPStorage>(
+      n_periods, max_remaining_cash);
+  auto value_strat =
+      std::make_unique<genericdp::ValueStrategy<healthcare::HealthState>>(1);
 
   genericdp::TopDownDP<healthcare::HealthState> health_dp(
-      std::move(storage), std::move(ex_fact), std::move(end_fact), 1);
+      std::move(storage), std::move(ex_fact), std::move(end_fact),
+      std::move(value_strat));
 
   auto solution = health_dp.GetSolution(healthcare::HealthState(1, 70, 0, 0));
-  std::cout << solution[0].first->GetHeader() << ", " << "Total Value" << std::endl;
-  for (auto&& end_state_value : solution) {
+  std::cout << solution[0].first->GetHeader() << ", "
+            << "Total Value" << std::endl;
+  for (auto &&end_state_value : solution) {
     std::cout << *end_state_value.first << ", " << end_state_value.second
               << std::endl;
   }

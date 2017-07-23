@@ -33,9 +33,6 @@ HealthDPStorage::GetOptimalDecision(const HS &state) const {
 }
 
 double HealthDPStorage::GetOptimalValue(const HS &state) const {
-  if (IsTerminalState(state)) {
-    return 0;
-  }
   return AccessIndex(value_table_, state);
 }
 

@@ -5,6 +5,7 @@
 #include "endogenous_iterator_factory.h"
 #include "endogenous_state.h"
 #include "exogenous_factory.h"
+#include "value_strategy.h"
 
 #include <exception>
 #include <iostream>
@@ -18,19 +19,18 @@ public:
   TopDownDP(std::unique_ptr<DPStorage<T>> storage,
             std::unique_ptr<const ExogenousFactory<T>> ex_fact,
             std::unique_ptr<const EndogenousIteratorFactory<T>> fact,
-            double discount_rate);
+            std::unique_ptr<const ValueStrategy<T>> calculator);
   std::vector<std::pair<std::unique_ptr<EndogenousState<T>>, double>> GetSolution(const T &init_state);
   std::pair<const EndogenousState<T>*, double> TrainGet(const T &init_state);
 
 private:
   std::pair<std::unique_ptr<const EndogenousState<T>>, double>
   FindOptimal(const ExogenousState<T> &int_state);
-  double CalculateValue(const EndogenousState<T> &end_state);
 
   std::unique_ptr<DPStorage<T>> storage_;
   std::unique_ptr<const ExogenousFactory<T>> ex_fact_;
   std::unique_ptr<const EndogenousIteratorFactory<T>> fact_;
-  double discount_rate_;
+  std::unique_ptr<const ValueStrategy<T>> calculator_;
 };
 
 template <class T>
@@ -38,15 +38,15 @@ TopDownDP<T>::TopDownDP(
     std::unique_ptr<DPStorage<T>> storage,
     std::unique_ptr<const ExogenousFactory<T>> ex_fact,
     std::unique_ptr<const EndogenousIteratorFactory<T>> fact,
-    double discount_rate)
+    std::unique_ptr<const ValueStrategy<T>> calculator)
     : storage_(std::move(storage)), ex_fact_(std::move(ex_fact)),
-      fact_(std::move(fact)), discount_rate_(discount_rate) {}
+      fact_(std::move(fact)), calculator_(std::move(calculator)) {}
 
 template <class T>
 std::pair<const EndogenousState<T>*, double>
 TopDownDP<T>::TrainGet(const T &state) {
   if (storage_->IsTerminalState(state)) {
-    return std::make_pair(nullptr, storage_->GetOptimalValue(state));
+    return std::make_pair(nullptr, calculator_->CalculateTerminalValue(state));
   }
   if (!storage_->IsStoredState(state)) {
     auto ex_state = ex_fact_->GetExogenous(state);
@@ -83,22 +83,16 @@ std::pair<std::unique_ptr<const EndogenousState<T>>, double>
 TopDownDP<T>::FindOptimal(const ExogenousState<T> &int_state) {
   auto end_it_ptr = fact_->GetIterator(int_state);
   EndogenousIterator<T> &end_it_ref = *end_it_ptr;
-  auto opt_state = end_it_ref->Clone();
-  double opt_value = CalculateValue(*end_it_ref);
-  while (++end_it_ref) {
-    double cur_value = CalculateValue(*end_it_ref);
-    if (cur_value > opt_value) {
+  std::unique_ptr<const EndogenousState<T>> opt_state = nullptr;
+  double opt_value = -1;
+  do{
+    double cur_value = calculator_->CalculateValue(end_it_ref->GetValue(), TrainGet(end_it_ref->GetState()).second);
+    if (!opt_state || cur_value > opt_value) {
       opt_state = std::move(end_it_ref->Clone());
       opt_value = cur_value;
     }
-  }
+  } while (++end_it_ref); 
   return std::make_pair(std::move(opt_state), opt_value);
-}
-
-template <class T>
-double TopDownDP<T>::CalculateValue(const EndogenousState<T> &end_state) {
-  return end_state.GetValue() +
-         discount_rate_ * TrainGet(end_state.GetState()).second;
 }
 
 } // namespace genericdp
