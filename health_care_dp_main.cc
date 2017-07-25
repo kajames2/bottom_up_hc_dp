@@ -7,8 +7,9 @@
 #include "linear_degeneration.h"
 #include "logistic_consumption.h"
 #include "shifted_logistic_regeneration.h"
-#include "top_down_dp.h"
+#include "dp.h"
 #include "value_strategy.h"
+#include "health_state_iterator.h"
 
 #include <iostream>
 #include <memory>
@@ -16,7 +17,7 @@
 
 int main() {
   int n_periods = 15;
-  int max_remaining_cash = 45;
+  int max_remaining_cash = 20;
   auto harvest =
       std::make_shared<const healthcare::FlatHarvest>(1, n_periods, 100);
   auto degen = std::make_shared<const healthcare::LinearDegeneration>(0, 10);
@@ -35,10 +36,13 @@ int main() {
   auto value_strat =
       std::make_unique<genericdp::ValueStrategy<healthcare::HealthState>>(1);
 
-  genericdp::TopDownDP<healthcare::HealthState> health_dp(
+  genericdp::DP<healthcare::HealthState> health_dp(
       std::move(storage), std::move(ex_fact), std::move(end_fact),
       std::move(value_strat));
 
+  //healthcaredp::HealthStateIterator state_it(n_periods, max_remaining_cash);
+  //health_dp.BottomUpTrain(state_it);
+  //std::cout << "finished training." << std::endl;
   auto solution = health_dp.GetSolution(healthcare::HealthState(1, 70, 0, 0));
   std::cout << solution[0].first->GetHeader() << ", "
             << "Total Value" << std::endl;
