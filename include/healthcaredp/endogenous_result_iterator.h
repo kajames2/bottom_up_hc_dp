@@ -20,17 +20,20 @@ public:
       int max_remaining_cash = 0);
   virtual EndogenousResultIterator &operator++() override;
 private:
-  int NextUniqueHealthInvestment() const;
-  bool HasRemainingCash(healthcare::Investment investment) const;
-  std::unique_ptr<ResultToEndogenousAdapter> GetEndogenousResult() const;
-  int GetHealthRegained(healthcare::Investment investment) const;
-
-  int available_cash_;
-  int prev_health_regained_;
+  bool SetNextHealthInvestmentIfAble();
+  ResultToEndogenousAdapter* GetEndogenousResult();
+  bool HasRemainingCash() const;
+  int GetHealthRegained() const;
+  double GetLifeEnjoyment() const;
+  void ChangeHealthInvestment(int health_investment);
+  
   const int max_remaining_cash_;
+  const healthcare::HealthState invest_state_;
   healthcare::Investment cur_investment_;
-  healthcare::HealthState invest_state_;
+  int cur_health_regained_;
+  int prev_health_regained_;
   ResultToEndogenousAdapterFactory state_factory_;
+  std::unique_ptr<ResultToEndogenousAdapter> cached_result_;
 };
 } // namespace healthcaredp
 #endif // _ENDOGENOUS_RESULT_ITERATOR_H_

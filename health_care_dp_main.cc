@@ -17,7 +17,7 @@
 
 int main() {
   int n_periods = 15;
-  int max_remaining_cash = 20;
+  int max_remaining_cash = 150;
   auto harvest =
       std::make_shared<const healthcare::FlatHarvest>(1, n_periods, 100);
   auto degen = std::make_shared<const healthcare::LinearDegeneration>(0, 10);
@@ -42,7 +42,6 @@ int main() {
 
   //healthcaredp::HealthStateIterator state_it(n_periods, max_remaining_cash);
   //health_dp.BottomUpTrain(state_it);
-  //std::cout << "finished training." << std::endl;
   auto solution = health_dp.GetSolution(healthcare::HealthState(1, 70, 0, 0));
   std::cout << solution[0].first->GetHeader() << ", "
             << "Total Value" << std::endl;

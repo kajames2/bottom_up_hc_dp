@@ -3,6 +3,7 @@
 
 #include "consumption.h"
 
+#include <array>
 #include <vector>
 
 namespace healthcare {
@@ -13,7 +14,9 @@ public:
   double GetLifeEnjoyment(int life_investment, int health) const override;
 
 private:
+  double CalculateEnjoyment(int life_investment, int health) const;
   double j_;
+  std::vector<std::array<float, 101>> cache_;
 };
 
 } // namespace healthcare

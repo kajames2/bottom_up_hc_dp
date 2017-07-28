@@ -13,10 +13,11 @@ public:
   ResultToEndogenousAdapterFactory(healthcare::PeriodResultFactory result_fact);
   std::unique_ptr<ResultToEndogenousAdapter>
   GetEndogenousResult(const healthcare::HealthState &state,
-                const healthcare::Investment &investment) const;
+                      const healthcare::Investment &investment) const;
   int GetHealthRegained(const healthcare::HealthState &state,
                         const healthcare::Investment &investment) const;
-
+  double GetLifeEnjoyment(const healthcare::HealthState &state,
+                          const healthcare::Investment &investment) const;
 private:
   healthcare::PeriodResultFactory result_fact_;
 };

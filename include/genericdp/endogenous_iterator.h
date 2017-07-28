@@ -18,7 +18,7 @@ public:
 
   explicit operator bool() const { return !done_; }
   reference operator*() const { return *state_; }
-  pointer operator->() const { return &(*state_); }
+  pointer operator->() const { return state_; }
 
   virtual EndogenousIterator<T> &operator++() = 0;
 
@@ -28,7 +28,7 @@ public:
 protected:
   EndogenousIterator(const ExogenousState<T> &state) : state_(), done_(false) {}
   bool done_;
-  std::unique_ptr<EndogenousState<T>> state_;
+  EndogenousState<T>* state_;
 };
 } // namespace genericdp
 #endif // _ENDOGENOUS_ITERATOR_H_

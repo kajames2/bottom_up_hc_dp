@@ -24,4 +24,10 @@ int ResultToEndogenousAdapterFactory::GetHealthRegained(
     const healthcare::Investment &investment) const {
   return result_fact_.GetHealthRegained(state, investment);
 }
+
+double ResultToEndogenousAdapterFactory::GetLifeEnjoyment(
+    const healthcare::HealthState &state,
+    const healthcare::Investment &investment) const {
+  return result_fact_.GetLifeEnjoyment(state, investment);
+}
 } // namespace healthcaredp
