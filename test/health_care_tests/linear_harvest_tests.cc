@@ -2,6 +2,8 @@
 #include "health_state.h"
 #include <gtest/gtest.h>
 
+#include <memory>
+
 class LinearHarvestTest : public ::testing::Test {
 public:
   LinearHarvestTest()

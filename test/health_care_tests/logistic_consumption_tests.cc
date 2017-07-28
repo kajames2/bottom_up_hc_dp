@@ -1,6 +1,8 @@
 #include "logistic_consumption.h"
 #include <gtest/gtest.h>
 
+#include <memory>
+
 class LogisticConsumptionTest : public ::testing::Test {
 public:
   LogisticConsumptionTest()

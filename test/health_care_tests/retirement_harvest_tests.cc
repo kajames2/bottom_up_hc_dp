@@ -2,6 +2,8 @@
 #include "health_state.h"
 #include <gtest/gtest.h>
 
+#include <memory>
+
 class RetirementHarvestTest : public ::testing::Test {
 public:
   RetirementHarvestTest()

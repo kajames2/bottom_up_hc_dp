@@ -2,7 +2,7 @@
 #define _SHIFTED_LOGISTIC_REGENERATION_H_
 
 #include "regeneration.h"
-#include <vector>
+#include <array>
 
 namespace healthcare {
 
@@ -12,6 +12,8 @@ public:
   int GetHealthRegained(int health_investment, int health) const override;
 
 private:
+  int CalculateHealthRegained(int health_investment, int health) const;
+  std::array<std::array<int, 101>, 301> cache_;
   double k_;
 };
 

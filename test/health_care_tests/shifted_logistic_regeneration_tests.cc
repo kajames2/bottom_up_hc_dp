@@ -1,6 +1,8 @@
 #include "shifted_logistic_regeneration.h"
 #include <gtest/gtest.h>
 
+#include <memory>
+
 class ShiftedLogisticRegenerationTest : public ::testing::Test {
 public:
   ShiftedLogisticRegenerationTest()

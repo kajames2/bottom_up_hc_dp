@@ -28,7 +28,7 @@ public:
 protected:
   EndogenousIterator(const ExogenousState<T> &state) : state_(), done_(false) {}
   bool done_;
-  std::shared_ptr<EndogenousState<T>> state_;
+  std::unique_ptr<EndogenousState<T>> state_;
 };
 } // namespace genericdp
 #endif // _ENDOGENOUS_ITERATOR_H_

@@ -1,6 +1,8 @@
 #include "increasing_decay_consumption.h"
 #include <gtest/gtest.h>
 
+#include <memory>
+
 class IncreasingDecayConsumptionTest : public ::testing::Test {
 public:
   IncreasingDecayConsumptionTest()

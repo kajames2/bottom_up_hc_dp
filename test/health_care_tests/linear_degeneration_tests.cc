@@ -2,6 +2,8 @@
 #include "health_state.h"
 #include <gtest/gtest.h>
 
+#include <memory>
+
 class LinearDegenerationTest : public ::testing::Test {
 public:
   LinearDegenerationTest()

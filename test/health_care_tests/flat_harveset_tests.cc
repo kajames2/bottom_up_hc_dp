@@ -2,6 +2,8 @@
 #include "health_state.h"
 #include <gtest/gtest.h>
 
+#include <memory>
+
 class FlatHarvestTest : public ::testing::Test {
 public:
   FlatHarvestTest() : state_(0, 0, 0, 0), harvest_() {}

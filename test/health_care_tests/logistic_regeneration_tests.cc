@@ -1,6 +1,8 @@
 #include "logistic_regeneration.h"
 #include <gtest/gtest.h>
 
+#include <memory>
+
 class LogisticRegenerationTest : public ::testing::Test {
 public:
   LogisticRegenerationTest()
