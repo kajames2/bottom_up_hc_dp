@@ -11,7 +11,8 @@ ResultToEndogenousAdapterFactory::ResultToEndogenousAdapterFactory(
     healthcare::PeriodResultFactory result_fact)
     : result_fact_(result_fact) {}
 
-std::unique_ptr<ResultToEndogenousAdapter> ResultToEndogenousAdapterFactory::GetEndogenousResult(
+std::unique_ptr<ResultToEndogenousAdapter>
+ResultToEndogenousAdapterFactory::GetEndogenousResult(
     const healthcare::HealthState &state,
     const healthcare::Investment &investment) const {
   healthcare::PeriodResult result =
@@ -29,5 +30,11 @@ double ResultToEndogenousAdapterFactory::GetLifeEnjoyment(
     const healthcare::HealthState &state,
     const healthcare::Investment &investment) const {
   return result_fact_.GetLifeEnjoyment(state, investment);
+}
+
+double
+ResultToEndogenousAdapterFactory::GetLifeEnjoyment(int end_health,
+                                                   int life_investment) const {
+  return result_fact_.GetLifeEnjoyment(end_health, life_investment);
 }
 } // namespace healthcaredp

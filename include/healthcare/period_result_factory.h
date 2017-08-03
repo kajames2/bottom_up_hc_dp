@@ -19,6 +19,7 @@ public:
                                      const Investment &investment) const;
   double GetLifeEnjoyment(const HealthState &state,
                           const Investment &investment) const;
+  double GetLifeEnjoyment(int end_health, int life_investment) const;
   int GetHealthRegained(const HealthState &state,
                         const Investment &investment) const;
 

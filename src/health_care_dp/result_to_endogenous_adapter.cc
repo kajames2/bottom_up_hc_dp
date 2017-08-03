@@ -22,10 +22,7 @@ ResultToEndogenousAdapter::Clone() const {
 
 std::string
 ResultToEndogenousAdapter::GetHeader() const {
-  return std::string("Period") + ", "
-      + "Inv. Health" + ", "
-      + "Inv. Cash" + ", "
-      + "Health Expenditure" + ", "
+  return std::string("Health Expenditure") + ", "
       + "Life Expenditure" + ", "
       + "End Health" + ", "
       + "End Cash" + ", "
@@ -35,11 +32,7 @@ ResultToEndogenousAdapter::GetHeader() const {
 std::string
 ResultToEndogenousAdapter::GetString() const {
   healthcare::HealthState hstate = end_state_.state;
-  healthcare::HealthState istate = end_state_.investment_state;
-  return std::to_string(istate.period) + ", " +
-         std::to_string(istate.health) + ", " +
-         std::to_string(istate.cash) + ", " +
-         std::to_string(end_state_.investment.health_investment) + ", " +
+  return std::to_string(end_state_.investment.health_investment) + ", " +
          std::to_string(end_state_.investment.life_investment) + ", " +
          std::to_string(hstate.health) + ", " +
          std::to_string(hstate.cash) + ", " +

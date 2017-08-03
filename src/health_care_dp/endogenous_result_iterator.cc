@@ -75,7 +75,8 @@ ResultToEndogenousAdapter *EndogenousResultIterator::GetEndogenousResult() {
   int end_health = invest_state_.health + cur_health_regained_;
   int end_cash = invest_state_.cash - cur_investment_.life_investment -
                  cur_investment_.health_investment;
-  double enjoyment = GetLifeEnjoyment();
+  double enjoyment = state_factory_.GetLifeEnjoyment(end_health, cur_investment_.life_investment);
+
   cached_result_->SetInvestment(cur_investment_);
   cached_result_->UpdateEndState(end_health, end_cash, enjoyment);
   return cached_result_.get();

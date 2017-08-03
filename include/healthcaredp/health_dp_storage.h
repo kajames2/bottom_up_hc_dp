@@ -1,8 +1,8 @@
 #ifndef _HEALTH_DP_STORAGE_H_
 #define _HEALTH_DP_STORAGE_H_
 
+#include "dp_result.h"
 #include "dp_storage.h"
-#include "endogenous_state.h"
 #include "health_state.h"
 #include "result_to_endogenous_adapter.h"
 
@@ -16,25 +16,32 @@ public:
   using HS = healthcare::HealthState;
 
   HealthDPStorage(int max_periods, int max_remaining_cash);
-  
-  const genericdp::EndogenousState<healthcare::HealthState>* GetOptimalDecision(const HS &state) const override;
-  double GetOptimalValue(const HS &state) const override;
+
+  const genericdp::DPResultInterface<HS> &
+  GetOptimalResult(const HS &state) const override;
   bool IsTerminalState(const HS &state) const override;
   bool IsStoredState(const HS &state) const override;
-  void StoreOptimalDecision(
-      const HS &state,
-      std::unique_ptr<const genericdp::EndogenousState<HS>> end_state) override;
-  void StoreOptimalValue(const HS &state, double value) override;
+  double GetOptimalValue(const HS &state) const override;
+  void
+  StoreOptimalResult(const HS &state,
+                     std::unique_ptr<const genericdp::DPResultInterface<HS>>
+                         end_state) override;
 
 private:
-  template <class T> T& AccessIndex(vector3d<T> &vec, const HS &state);
-  template <class T> const T &AccessIndex(const vector3d<T> &vec, const HS &state) const;  
-  vector3d<std::unique_ptr<
-      const genericdp::EndogenousState<healthcare::HealthState>>>
-      state_table_;
-  vector3d<double> value_table_;
+  std::unique_ptr<const genericdp::DPResultInterface<HS>> &
+  AccessIndex(const HS &state);
+  const std::unique_ptr<const genericdp::DPResultInterface<HS>> &
+  AccessIndex(const HS &state) const;
+  vector3d<std::unique_ptr<const genericdp::DPResultInterface<HS>>>
+      result_table_;
+  std::vector<bool> is_stored_table_;
+  std::vector<double> value_table_;
+
   int max_periods_;
   int max_remaining_cash_;
+  const int sub_table_size_;
+  const int row_size_;
 };
+
 } // namespace healthcaredp
 #endif // _HEALTH_DP_STORAGE_H_

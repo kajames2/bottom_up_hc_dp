@@ -9,15 +9,14 @@ struct PeriodResult {
   PeriodResult() {}
   PeriodResult(HealthState end_s, Investment i, double le,
                HealthState inv_s = HealthState(0, 0, 0, 0))
-      : state(end_s), investment(i), enjoyment(le), investment_state(inv_s) {}
+      : state(end_s), investment(i), enjoyment(le){}
 
-  HealthState investment_state;
   HealthState state;
   Investment investment;
   double enjoyment;
 
   bool operator==(const PeriodResult &other) const {
-    return state == other.state && investment_state == other.investment_state &&
+    return state == other.state &&
            investment == other.investment && enjoyment == other.enjoyment;
   }
 };

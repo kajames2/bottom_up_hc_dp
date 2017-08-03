@@ -18,6 +18,7 @@ public:
                         const healthcare::Investment &investment) const;
   double GetLifeEnjoyment(const healthcare::HealthState &state,
                           const healthcare::Investment &investment) const;
+  double GetLifeEnjoyment(int end_health, int life_investment) const;
 private:
   healthcare::PeriodResultFactory result_fact_;
 };

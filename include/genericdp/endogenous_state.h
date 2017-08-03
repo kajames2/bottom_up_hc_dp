@@ -23,8 +23,6 @@ public:
   EndogenousState(const EndogenousState&) = delete;
   EndogenousState& operator=(const EndogenousState&) = delete;
   virtual ~EndogenousState() {}
- private:
-
 };
 } // namespace genericdp
 #endif // _ENDOGENOUS_STATE_H_
