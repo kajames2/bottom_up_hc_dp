@@ -13,28 +13,22 @@ namespace healthcaredp {
 class HealthDPStorage : public genericdp::DPStorage<healthcare::HealthState> {
 public:
   template <class T> using vector3d = std::vector<std::vector<std::vector<T>>>;
-  using HS = healthcare::HealthState;
+  using ResultPtr = std::unique_ptr<
+      const genericdp::DPResultInterface<healthcare::HealthState>>;
 
   HealthDPStorage(int max_periods, int max_remaining_cash);
 
-  const genericdp::DPResultInterface<HS> &
-  GetOptimalResult(const HS &state) const override;
-  bool IsTerminalState(const HS &state) const override;
-  bool IsStoredState(const HS &state) const override;
-  double GetOptimalValue(const HS &state) const override;
-  void
-  StoreOptimalResult(const HS &state,
-                     std::unique_ptr<const genericdp::DPResultInterface<HS>>
-                         end_state) override;
+  const genericdp::DPResultInterface<healthcare::HealthState> &
+  GetOptimalResult(const healthcare::HealthState &state) const override;
+  bool IsTerminalState(const healthcare::HealthState &state) const override;
+  bool IsStoredState(const healthcare::HealthState &state) const override;
+  double GetOptimalValue(const healthcare::HealthState &state) const override;
+  void StoreOptimalResult(const healthcare::HealthState &state,
+                          ResultPtr end_state) override;
 
 private:
-  std::unique_ptr<const genericdp::DPResultInterface<HS>> &
-  AccessIndex(const HS &state);
-  const std::unique_ptr<const genericdp::DPResultInterface<HS>> &
-  AccessIndex(const HS &state) const;
-  vector3d<std::unique_ptr<const genericdp::DPResultInterface<HS>>>
-      result_table_;
-  std::vector<bool> is_stored_table_;
+  int GetIndex(const healthcare::HealthState &state) const;
+  std::vector<ResultPtr> result_table_;
   std::vector<double> value_table_;
 
   int max_periods_;
