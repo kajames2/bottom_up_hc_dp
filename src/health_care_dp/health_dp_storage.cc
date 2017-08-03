@@ -1,7 +1,8 @@
 #include "health_dp_storage.h"
-#include "endogenous_state.h"
 #include "health_state.h"
-#include <iostream>
+#include "dp_result_interface.h"
+
+#include <memory>
 
 namespace healthcaredp {
 using healthcare::HealthState;
@@ -41,4 +42,4 @@ int HealthDPStorage::GetIndex(const HealthState &state) const {
   return (state.period - 1) * sub_table_size_ + state.health * row_size_ +
          state.cash;
 }
-}
+}  // namespace healthcaredp
