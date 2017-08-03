@@ -39,7 +39,8 @@ void HealthDPStorage::StoreOptimalResult(const HealthState &state,
 }
 
 int HealthDPStorage::GetIndex(const HealthState &state) const {
-  return (state.period - 1) * sub_table_size_ + state.health * row_size_ +
-         state.cash;
+  return ((state.period - 1) * sub_table_size_)
+      + (state.health * row_size_)
+      + state.cash;
 }
 }  // namespace healthcaredp

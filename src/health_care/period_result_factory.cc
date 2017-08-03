@@ -34,9 +34,9 @@ HealthState PeriodResultFactory::GetPostInvestmentState(
 double
 PeriodResultFactory::GetLifeEnjoyment(const HealthState &state,
                                       const Investment &investment) const {
-  //  if (!IsAlive(state)) {
-  //  return 0;
-  //}
+  if (!IsAlive(state)) {
+    return 0;
+  }
   return consumption_->GetLifeEnjoyment(investment.life_investment,
                                         GetHealthAtEnd(state, investment));
 }
@@ -58,17 +58,17 @@ int PeriodResultFactory::GetHealthRegained(const HealthState &state,
 
 int PeriodResultFactory::GetHealthAtEnd(const HealthState &state,
                                         const Investment &investment) const {
-  // if (!IsAlive(state)) {
-  //  return 0;
-  //}
+  if (!IsAlive(state)) {
+    return 0;
+  }
   return state.health + GetHealthRegained(state, investment);
 }
 
 int PeriodResultFactory::GetCashAtEnd(const HealthState &state,
                                       const Investment &investment) const {
-  // if (!IsAlive(state)) {
-  //  return 0;
-  //}
+  if (!IsAlive(state)) {
+    return 0;
+  }
   return state.cash - investment.health_investment - investment.life_investment;
 }
 } // namespace healthcare
