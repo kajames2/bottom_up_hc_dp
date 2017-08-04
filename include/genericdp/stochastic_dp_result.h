@@ -24,6 +24,7 @@ public:
     return std::to_string(probability_) + ", "
         + DPResult<T>::GetString();
   }
+  
   virtual std::string GetHeader() const override {
     return std::string("Probability") + ", "
         + DPResult<T>::GetHeader();
@@ -33,5 +34,4 @@ private:
   double probability_;
 };
 }
-
 #endif // _STOCHASTIC_DP_RESULT_H_

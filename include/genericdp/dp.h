@@ -19,27 +19,28 @@
 namespace genericdp {
 template <class T> class DP {
 public:
-  DP(std::unique_ptr<DPStorage<T>> storage,
+  DP(std::unique_ptr<DPStorage<T, DPResult>> storage,
      std::unique_ptr<const ExogenousFactory<T>> ex_fact,
      std::unique_ptr<const EndogenousIteratorFactory<T>> fact,
      std::unique_ptr<const ValueStrategy<T>> calculator);
-  std::vector<std::unique_ptr<DPResultInterface<T>>> GetSolution(const T &init_state);
-  const DPResultInterface<T>& GetOptimalResult(const T &init_state);
+  std::vector<DPResult<T>> GetSolution(const T &init_state);
+  const DPResult<T> &GetOptimalResult(const T &init_state);
   double GetOptimalValue(const T &init_state);
   void BottomUpTrain(StateIterator<T> &state_iterator);
   void TrainIfNecessary(const T &state);
   void Train(const T &state);
-private:
-  std::unique_ptr<DPResult<T>> CalculateOptimal(const ExogenousState<T> &int_state);
 
-  std::unique_ptr<DPStorage<T>> storage_;
+private:
+  DPResult<T> CalculateOptimal(const ExogenousState<T> &int_state);
+
+  std::unique_ptr<DPStorage<T, DPResult>> storage_;
   std::unique_ptr<const ExogenousFactory<T>> ex_fact_;
   std::unique_ptr<const EndogenousIteratorFactory<T>> fact_;
   std::unique_ptr<const ValueStrategy<T>> calculator_;
 };
 
 template <class T>
-DP<T>::DP(std::unique_ptr<DPStorage<T>> storage,
+DP<T>::DP(std::unique_ptr<DPStorage<T, DPResult>> storage,
           std::unique_ptr<const ExogenousFactory<T>> ex_fact,
           std::unique_ptr<const EndogenousIteratorFactory<T>> fact,
           std::unique_ptr<const ValueStrategy<T>> calculator)
@@ -47,13 +48,13 @@ DP<T>::DP(std::unique_ptr<DPStorage<T>> storage,
       fact_(std::move(fact)), calculator_(std::move(calculator)) {}
 
 template <class T>
-std::vector<std::unique_ptr<DPResultInterface<T>>> DP<T>::GetSolution(const T &init_state) {
-  std::vector<std::unique_ptr<DPResultInterface<T>>> solution;
+std::vector<DPResult<T>> DP<T>::GetSolution(const T &init_state) {
+  std::vector<DPResult<T>> solution;
   T cur_state = init_state;
   try {
     while (!storage_->IsTerminalState(cur_state)) {
-      const DPResultInterface<T>& result = GetOptimalResult(cur_state);
-      solution.push_back(result.Clone());
+      auto result = GetOptimalResult(cur_state);
+      solution.push_back(result);
       cur_state = result.GetState();
     }
   } catch (const std::out_of_range &oor) {
@@ -70,7 +71,7 @@ template <class T> void DP<T>::BottomUpTrain(StateIterator<T> &state_iterator) {
   } while (++state_iterator);
 }
 
-template <class T> const DPResultInterface<T>& DP<T>::GetOptimalResult(const T &state) {
+template <class T> const DPResult<T> &DP<T>::GetOptimalResult(const T &state) {
   TrainIfNecessary(state);
   return storage_->GetOptimalResult(state);
 }
@@ -83,7 +84,6 @@ template <class T> double DP<T>::GetOptimalValue(const T &state) {
   return storage_->GetOptimalValue(state);
 }
 
-
 template <class T> void DP<T>::TrainIfNecessary(const T &state) {
   if (!storage_->IsStoredState(state)) {
     Train(state);
@@ -91,14 +91,14 @@ template <class T> void DP<T>::TrainIfNecessary(const T &state) {
 }
 
 template <class T> void DP<T>::Train(const T &state) {
-    auto ex_state = ex_fact_->GetExogenous(state);
-    auto opt_result = CalculateOptimal(*ex_state);
-    storage_->StoreOptimalResult(state, std::move(opt_result));  
+  auto ex_state = ex_fact_->GetExogenous(state);
+  auto opt_result = CalculateOptimal(*ex_state);
+  storage_->StoreOptimalResult(state, std::move(opt_result));
+  storage_->StoreOptimalValue(state, opt_result.GetValue());
 }
 
 template <class T>
-std::unique_ptr<DPResult<T>>
-DP<T>::CalculateOptimal(const ExogenousState<T> &int_state) {
+DPResult<T> DP<T>::CalculateOptimal(const ExogenousState<T> &int_state) {
   auto end_it_ptr = fact_->GetIterator(int_state);
   EndogenousIterator<T> &end_it_ref = *end_it_ptr;
   std::unique_ptr<const EndogenousState<T>> opt_state = nullptr;
@@ -111,7 +111,7 @@ DP<T>::CalculateOptimal(const ExogenousState<T> &int_state) {
       opt_value = cur_value;
     }
   } while (++end_it_ref);
-  return std::make_unique<DPResult<T>>(int_state.Clone(), std::move(opt_state), opt_value);
+  return DPResult<T>(int_state.Clone(), std::move(opt_state), opt_value);
 }
 
 } // namespace genericdp

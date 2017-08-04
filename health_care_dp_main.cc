@@ -32,7 +32,7 @@ int main() {
       std::make_unique<const healthcaredp::EndogenousResultIteratorFactory>(
           regen, consume, max_remaining_cash);
 
-  auto storage = std::make_unique<healthcaredp::HealthDPStorage>(
+  auto storage = std::make_unique<healthcaredp::HealthDPStorage<genericdp::DPResult>>(
       n_periods, max_remaining_cash);
   auto value_strat =
       std::make_unique<genericdp::ValueStrategy<healthcare::HealthState>>(1);
@@ -44,8 +44,8 @@ int main() {
   //  healthcaredp::HealthStateIterator state_it(n_periods, max_remaining_cash);
   //  health_dp.BottomUpTrain(state_it);
   auto solution = health_dp.GetSolution(healthcare::HealthState(1, 70, 0, 0));
-  std::cout << solution[0]->GetHeader() << std::endl;
+  std::cout << solution[0].GetHeader() << std::endl;
   for (auto &opt_result : solution) {
-    std::cout << opt_result->GetString() << std::endl;
+    std::cout << opt_result.GetString() << std::endl;
   }
 }

@@ -7,10 +7,8 @@
 #include <memory>
 
 namespace genericdp {
-template <class T> class DPResultInterface {
+class DPResultInterface {
 public:
-  virtual std::unique_ptr<DPResultInterface> Clone() const = 0;
-  virtual T GetState() const = 0;
   virtual std::string GetString() const = 0;
   virtual std::string GetHeader() const = 0;
 
