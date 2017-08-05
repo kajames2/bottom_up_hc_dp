@@ -6,27 +6,12 @@
 #include <memory>
 
 namespace genericdp {
-template <class T> class StochasticExogenousState : public ExogenousState<T> {
+template <class T> class StochasticExogenousState {
 public:
   StochasticExogenousState(std::unique_ptr<ExogenousState<T>> state, double prob)
       : state_(std::move(state)), probability_(prob) {}
-
-  virtual T GetState() const override { return state_->GetState(); }
-
-  virtual std::unique_ptr<ExogenousState<T>> Clone() const override {
-    return std::make_unique<StochasticExogenousState>(state_->Clone(),
-                                                      probability_);
-  }
-
-  virtual std::string GetString() const override {
-    return std::to_string(probability_) + ", " + state_->GetString();
-  }
-  virtual std::string GetHeader() const override {
-    return std::string("Probability") + ", " + state_->GetHeader();
-  }
-
   double GetProbability() const { return probability_; }
-
+  ExogenousState<T>* GetExogenousState() const {return state_.get();}
 private:
   std::unique_ptr<ExogenousState<T>> state_;
   double probability_;

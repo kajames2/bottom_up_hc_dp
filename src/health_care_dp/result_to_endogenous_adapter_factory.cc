@@ -33,8 +33,8 @@ double ResultToEndogenousAdapterFactory::GetLifeEnjoyment(
 }
 
 double
-ResultToEndogenousAdapterFactory::GetLifeEnjoyment(int end_health,
+ResultToEndogenousAdapterFactory::CalculateLifeEnjoyment(int end_health,
                                                    int life_investment) const {
-  return result_fact_.GetLifeEnjoyment(end_health, life_investment);
+  return result_fact_.CalculateLifeEnjoyment(end_health, life_investment);
 }
 } // namespace healthcaredp

@@ -6,7 +6,6 @@
 #include "exogenous_state.h"
 
 #include <memory>
-#include <iostream>
 
 namespace genericdp {
 template <class T> class DPResult {
@@ -22,18 +21,15 @@ public:
       : exogenous_state_(other.exogenous_state_->Clone()),
         endogenous_state_(other.endogenous_state_->Clone()),
         value_(other.value_) {}
-  DPResult &operator=(const DPResult &other) {
-    if (&other == this) {
-      return this;
-    }
-    DPResult copy = DPResult(other);
+  DPResult &operator=(const DPResult& other) {
     using std::swap;
+    DPResult copy(other);
     swap(*this, copy);
     return *this;
   }
   DPResult(DPResult &&) = default;
-  DPResult &operator=(DPResult &&) = default;
-
+  DPResult &operator=(DPResult&&) = default;
+  
   std::string GetString() const {
     return exogenous_state_->GetString() + ", " +
            endogenous_state_->GetString() + ", " + std::to_string(GetValue());

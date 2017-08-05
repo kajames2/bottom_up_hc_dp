@@ -37,13 +37,16 @@ PeriodResultFactory::GetLifeEnjoyment(const HealthState &state,
   if (!IsAlive(state)) {
     return 0;
   }
-  return consumption_->GetLifeEnjoyment(investment.life_investment,
-                                        GetHealthAtEnd(state, investment));
+  return CalculateLifeEnjoyment(GetHealthAtEnd(state, investment),
+                                investment.life_investment);
 }
 
-double PeriodResultFactory::GetLifeEnjoyment(int end_health,
-                                             int life_investment) const {
-  return consumption_->GetLifeEnjoyment(life_investment, end_health);
+double PeriodResultFactory::CalculateLifeEnjoyment(int end_health,
+                                                   int life_investment) const {
+  if (end_health <= 0) {
+    return 0;
+  }
+  return consumption_->GetLifeEnjoyment(end_health, life_investment);
 }
 
 int PeriodResultFactory::GetHealthRegained(const HealthState &state,
@@ -51,8 +54,8 @@ int PeriodResultFactory::GetHealthRegained(const HealthState &state,
   if (!IsAlive(state)) {
     return 0;
   }
-  int regen = regeneration_->GetHealthRegained(investment.health_investment,
-                                               state.health);
+  int regen = regeneration_->GetHealthRegained(state.health,
+                                               investment.health_investment);
   return std::min(100 - state.health, regen);
 }
 

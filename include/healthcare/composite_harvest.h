@@ -6,7 +6,6 @@
 
 #include "harvest.h"
 #include "health_state.h"
-#include "null_harvest.h"
 
 namespace healthcare {
 class CompositeHarvest : public Harvest {
@@ -21,10 +20,18 @@ protected:
   int CalculateHarvest(const HealthState &state) const override;
 
 private:
+  class NullHarvest;
   const Harvest& GetHarvestInRange(int period) const;
 
   std::vector<std::shared_ptr<const Harvest>> harvest_strats_;
   std::unique_ptr<NullHarvest> null_harvest_;
+
+  class NullHarvest : public Harvest {
+   public:
+    bool InRange(int period) const override { return false; }
+   protected:
+    int CalculateHarvest(const HealthState& state) const override { return -1; }
+  };
 };
 } // namespace healthcare
 #endif // _COMPOSITE_HARVEST_H_

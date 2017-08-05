@@ -10,7 +10,7 @@ namespace healthcare {
 class IncreasingDecayConsumption : public Consumption {
 public:
   IncreasingDecayConsumption(double alpha, double c, double beta);
-  double GetLifeEnjoyment(int life_investment, int health) const override;
+  double GetLifeEnjoyment(int health, int life_investment) const override;
 
 private:
   double alpha_;

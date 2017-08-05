@@ -23,5 +23,5 @@ protected:
 };
 
 TEST_F(LogisticRegenerationTest, GetRegeneration) {
-  ASSERT_DOUBLE_EQ(60, regen_->GetHealthRegained(health_investment_, health_));
+  ASSERT_DOUBLE_EQ(60, regen_->GetHealthRegained(health_, health_investment_));
 }

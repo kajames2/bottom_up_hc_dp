@@ -16,10 +16,18 @@ public:
       , probability_(probability) {}
   StochasticDPResult() : DPResult<T>(), probability_(0) {}
 
-  virtual std::unique_ptr<DPResultInterface<T>> Clone() const override {
-    std::make_unique<StochasticDPResult>(exogenous_state_->Clone(), endogenous_state_->Clone(), GetValue());
-  };
-
+  StochasticDPResult(const StochasticDPResult &other)
+      : DPResult<T>(other)
+      , probability_(other.probability) {}
+  StochasticDPResult &operator=(const StochasticDPResult& other) {
+    using std::swap;
+    StochasticDPResult copy(other);
+    swap(*this, copy);
+    return *this;
+  }
+  StochasticDPResult(StochasticDPResult &&) = default;
+  StochasticDPResult &operator=(StochasticDPResult&&) = default;
+  
   virtual std::string GetString() const override {
     return std::to_string(probability_) + ", "
         + DPResult<T>::GetString();

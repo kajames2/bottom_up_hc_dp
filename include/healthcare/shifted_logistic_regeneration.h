@@ -3,17 +3,19 @@
 
 #include "regeneration.h"
 #include <array>
+#include <vector>
 
 namespace healthcare {
 
 class ShiftedLogisticRegeneration : public Regeneration {
 public:
   ShiftedLogisticRegeneration(double k);
-  int GetHealthRegained(int health_investment, int health) const override;
+  ShiftedLogisticRegeneration(double k, int max_investment);
+  int GetHealthRegained(int health, int health_investment) const override;
 
 private:
-  int CalculateHealthRegained(int health_investment, int health) const;
-  std::array<std::array<int, 101>, 301> cache_;
+  int CalculateHealthRegained(int health, int health_investment) const;
+  std::vector<std::array<int, 101>> cache_;
   double k_;
 };
 

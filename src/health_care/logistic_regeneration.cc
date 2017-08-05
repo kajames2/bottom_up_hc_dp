@@ -7,8 +7,8 @@ namespace healthcare {
 LogisticRegeneration::LogisticRegeneration(double gamma, double sigma, double r)
     : gamma_(gamma), sigma_(sigma), r_(r) {}
 
-int LogisticRegeneration::GetHealthRegained(int health_investment,
-                                            int health) const {
+int LogisticRegeneration::GetHealthRegained(int health,
+                                            int health_investment) const {
   return static_cast<int>(
       gamma_ * (1 - std::exp(-1 * sigma_ * health_investment)) /
       (1.0 + std::exp((-1) * sigma_ * health_investment - r_)));

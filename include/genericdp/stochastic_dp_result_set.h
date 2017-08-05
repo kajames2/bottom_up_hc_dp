@@ -1,29 +1,40 @@
 #ifndef _STOCHASTIC_DP_RESULT_SET_H_
 #define _STOCHASTIC_DP_RESULT_SET_H_
 
+#include "dp_result_interface.h"
 #include "endogenous_state.h"
 #include "exogenous_state.h"
-#include "dp_result_interface.h"
 #include "stochastic_dp_result.h"
 
-#include <vector>
-#include <string>
 #include <iostream>
+#include <string>
+#include <vector>
 
 namespace genericdp {
-template <class T> class StochasticDPResultSet : public DPResultInterface<T> {
+template <class T> class StochasticDPResultSet {
 public:
   StochasticDPResultSet();
   StochasticDPResultSet(std::vector<StochasticDPResult<T>> result_vec);
   void AddResult(StochasticDPResult<T> result);
-  T GetState() const override;
-  double GetValue() const override;
-  std::string GetHeader() const override;
-  std::string GetString() const override;
+  double GetValue() const;
+  std::string GetHeader() const;
+  std::string GetString() const;
+
+  StochasticDPResultSet(const StochasticDPResultSet &other)
+      : result_vec_(other.result_vec_), value_(other.value_) {}
+  StochasticDPResultSet &operator=(const StochasticDPResultSet &other) {
+    using std::swap;
+    StochasticDPResultSet copy(other);
+    swap(*this, copy);
+    return *this;
+  }
+  StochasticDPResultSet(StochasticDPResultSet &&) = default;
+  StochasticDPResultSet &operator=(StochasticDPResultSet &&) = default;
+
 private:
   double CalculateValue() const;
   std::vector<StochasticDPResult<T>> result_vec_;
-  double value;
+  double value_;
 };
 
 template <class T> StochasticDPResultSet<T>::StochasticDPResultSet() {}
@@ -31,17 +42,17 @@ template <class T>
 StochasticDPResultSet<T>::StochasticDPResultSet(
     std::vector<StochasticDPResult<T>> result_vec)
     : result_vec_(std::move(result_vec)) {
-  value = CalculateValue();
+  value_ = CalculateValue();
 }
 
 template <class T>
 void StochasticDPResultSet<T>::AddResult(StochasticDPResult<T> result) {
   result_vec_.push_back(std::move(result));
-  value = CalculateValue();
+  value_ = CalculateValue();
 }
 
 template <class T> double StochasticDPResultSet<T>::GetValue() const {
-  return value;
+  return value_;
 }
 
 template <class T> double StochasticDPResultSet<T>::CalculateValue() const {
@@ -54,18 +65,14 @@ template <class T> double StochasticDPResultSet<T>::CalculateValue() const {
 
 template <class T> std::string StochasticDPResultSet<T>::GetString() const {
   std::string out_str = "";
-  for (const auto& result : result_vec_) {
+  for (const auto &result : result_vec_) {
     out_str += result.GetString() + std::endl;
   }
   return out_str;
 }
 
 template <class T> std::string StochasticDPResultSet<T>::GetHeader() const {
-    return result_vec_.at(0).GetHeader();
-}
-
-template <class T> T StochasticDPResultSet<T>::GetState() const {
-  return result_vec_.at(0).GetState();
+  return result_vec_.at(0).GetHeader();
 }
 
 } // namespace genericdp

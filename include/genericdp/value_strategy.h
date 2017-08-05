@@ -6,7 +6,7 @@
 namespace genericdp {
 template <class T> class ValueStrategy {
 public:
-  ValueStrategy(double discount_rate) : discount_rate_(discount_rate) {}
+  ValueStrategy(double discount_rate = 1) : discount_rate_(discount_rate) {}
 
   virtual double CalculateValue(double current_value, double future_value) const {
     return current_value + discount_rate_ * future_value;

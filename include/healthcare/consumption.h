@@ -5,7 +5,7 @@ namespace healthcare {
 
 class Consumption {
  public:
-  virtual double GetLifeEnjoyment(int life_investment, int health) const = 0;
+  virtual double GetLifeEnjoyment(int health, int life_investment) const = 0;
   Consumption() = default;
   Consumption(const Consumption&) = delete;
   Consumption& operator=(const Consumption&) = delete;

@@ -8,7 +8,6 @@
 
 #include <memory>
 #include <vector>
-#include <iostream>
 
 namespace healthcaredp {
 template <template <typename> class Container>
@@ -80,7 +79,7 @@ template <template <typename> class Container>
 void HealthDPStorage<Container>::StoreOptimalResult(
     const healthcare::HealthState &state,
     Container<healthcare::HealthState> opt_result) {
-  result_table_.at(GetIndex(state)) = std::move(opt_result);
+  result_table_.at(GetIndex(state)) = opt_result;
   is_stored_table_.at(GetIndex(state)) = true;
 }
 

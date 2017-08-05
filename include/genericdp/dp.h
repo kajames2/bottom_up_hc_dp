@@ -2,8 +2,8 @@
 #define _DP_H_
 
 #include "dp_result.h"
-#include "dp_result_interface.h"
 #include "dp_storage.h"
+#include "dp_template.h"
 #include "endogenous_iterator_factory.h"
 #include "endogenous_state.h"
 #include "exogenous_factory.h"
@@ -13,47 +13,38 @@
 #include <exception>
 #include <iostream>
 #include <memory>
-#include <utility>
 #include <vector>
 
 namespace genericdp {
-template <class T> class DP {
+template <class T> class DP : public DPTemplate<T, DPResult> {
 public:
   DP(std::unique_ptr<DPStorage<T, DPResult>> storage,
-     std::unique_ptr<const ExogenousFactory<T>> ex_fact,
      std::unique_ptr<const EndogenousIteratorFactory<T>> fact,
-     std::unique_ptr<const ValueStrategy<T>> calculator);
+     std::unique_ptr<const ValueStrategy<T>> calculator,
+     std::unique_ptr<const ExogenousFactory<T>> ex_fact);
+
   std::vector<DPResult<T>> GetSolution(const T &init_state);
-  const DPResult<T> &GetOptimalResult(const T &init_state);
-  double GetOptimalValue(const T &init_state);
-  void BottomUpTrain(StateIterator<T> &state_iterator);
-  void TrainIfNecessary(const T &state);
-  void Train(const T &state);
+  void Train(const T &state) override;
 
 private:
-  DPResult<T> CalculateOptimal(const ExogenousState<T> &int_state);
-
-  std::unique_ptr<DPStorage<T, DPResult>> storage_;
   std::unique_ptr<const ExogenousFactory<T>> ex_fact_;
-  std::unique_ptr<const EndogenousIteratorFactory<T>> fact_;
-  std::unique_ptr<const ValueStrategy<T>> calculator_;
 };
 
 template <class T>
 DP<T>::DP(std::unique_ptr<DPStorage<T, DPResult>> storage,
-          std::unique_ptr<const ExogenousFactory<T>> ex_fact,
           std::unique_ptr<const EndogenousIteratorFactory<T>> fact,
-          std::unique_ptr<const ValueStrategy<T>> calculator)
-    : storage_(std::move(storage)), ex_fact_(std::move(ex_fact)),
-      fact_(std::move(fact)), calculator_(std::move(calculator)) {}
+          std::unique_ptr<const ValueStrategy<T>> calculator,
+          std::unique_ptr<const ExogenousFactory<T>> ex_fact)
+    : DPTemplate<T, DPResult>(std::move(storage), std::move(fact), std::move(calculator))
+    , ex_fact_(std::move(ex_fact)) {}
 
 template <class T>
 std::vector<DPResult<T>> DP<T>::GetSolution(const T &init_state) {
   std::vector<DPResult<T>> solution;
   T cur_state = init_state;
   try {
-    while (!storage_->IsTerminalState(cur_state)) {
-      auto result = GetOptimalResult(cur_state);
+    while (!this->storage_->IsTerminalState(cur_state)) {
+      auto result = this->GetOptimalResult(cur_state);
       solution.push_back(result);
       cur_state = result.GetState();
     }
@@ -61,58 +52,16 @@ std::vector<DPResult<T>> DP<T>::GetSolution(const T &init_state) {
     std::cerr << "A state was out of range for storage." << std::endl
               << oor.what() << std::endl;
   }
-
   return solution;
-}
-
-template <class T> void DP<T>::BottomUpTrain(StateIterator<T> &state_iterator) {
-  do {
-    Train(*state_iterator);
-  } while (++state_iterator);
-}
-
-template <class T> const DPResult<T> &DP<T>::GetOptimalResult(const T &state) {
-  TrainIfNecessary(state);
-  return storage_->GetOptimalResult(state);
-}
-
-template <class T> double DP<T>::GetOptimalValue(const T &state) {
-  if (storage_->IsTerminalState(state)) {
-    return calculator_->CalculateTerminalValue(state);
-  }
-  TrainIfNecessary(state);
-  return storage_->GetOptimalValue(state);
-}
-
-template <class T> void DP<T>::TrainIfNecessary(const T &state) {
-  if (!storage_->IsStoredState(state)) {
-    Train(state);
-  }
 }
 
 template <class T> void DP<T>::Train(const T &state) {
   auto ex_state = ex_fact_->GetExogenous(state);
-  auto opt_result = CalculateOptimal(*ex_state);
-  storage_->StoreOptimalResult(state, std::move(opt_result));
-  storage_->StoreOptimalValue(state, opt_result.GetValue());
+  auto opt_state_value = this->CalculateOptimal(*ex_state);
+  DPResult<T> opt_result(ex_state->Clone(), std::move(opt_state_value.first),
+                         opt_state_value.second);
+  this->storage_->StoreOptimalValue(state, opt_state_value.second);
+  this->storage_->StoreOptimalResult(state, opt_result);
 }
-
-template <class T>
-DPResult<T> DP<T>::CalculateOptimal(const ExogenousState<T> &int_state) {
-  auto end_it_ptr = fact_->GetIterator(int_state);
-  EndogenousIterator<T> &end_it_ref = *end_it_ptr;
-  std::unique_ptr<const EndogenousState<T>> opt_state = nullptr;
-  double opt_value = -1;
-  do {
-    double cur_value = calculator_->CalculateValue(
-        end_it_ref->GetValue(), GetOptimalValue(end_it_ref->GetState()));
-    if (!opt_state || cur_value > opt_value) {
-      opt_state = std::move(end_it_ref->Clone());
-      opt_value = cur_value;
-    }
-  } while (++end_it_ref);
-  return DPResult<T>(int_state.Clone(), std::move(opt_state), opt_value);
-}
-
 } // namespace genericdp
 #endif // _DP_H_

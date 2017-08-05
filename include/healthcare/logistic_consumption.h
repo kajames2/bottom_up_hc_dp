@@ -10,7 +10,7 @@ namespace healthcare {
 class LogisticConsumption : public Consumption {
 public:
   LogisticConsumption(double k);
-  double GetLifeEnjoyment(int life_investment, int health) const override;
+  double GetLifeEnjoyment(int health, int life_investment) const override;
 
 private:
   double k_;

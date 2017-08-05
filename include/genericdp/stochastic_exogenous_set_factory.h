@@ -8,7 +8,7 @@ namespace genericdp {
 
 template <typename T> class StochasticExogenousSetFactory {
 public:
-  virtual std::vector<std::unique_ptr<StochasticExogenousState<T>>>
+  virtual std::vector<StochasticExogenousState<T>>
   GetExogenousSet(const T &state) const;
 };
 

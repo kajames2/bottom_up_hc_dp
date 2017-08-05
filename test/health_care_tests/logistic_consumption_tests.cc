@@ -23,5 +23,5 @@ protected:
 };
 
 TEST_F(LogisticConsumptionTest, GetConsumption) {
-  ASSERT_DOUBLE_EQ(58.48468629040039, consumption_->GetLifeEnjoyment(life_investment_, health_));
+  ASSERT_DOUBLE_EQ(58.48468629040039, consumption_->GetLifeEnjoyment(health_, life_investment_));
 }

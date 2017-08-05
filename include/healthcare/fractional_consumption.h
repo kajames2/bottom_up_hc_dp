@@ -11,10 +11,11 @@ namespace healthcare {
 class FractionalConsumption : public Consumption {
 public:
   FractionalConsumption(double j);
-  double GetLifeEnjoyment(int life_investment, int health) const override;
+  FractionalConsumption(double j, int max_investment);
+  double GetLifeEnjoyment(int health, int life_investment) const override;
 
 private:
-  double CalculateEnjoyment(int life_investment, int health) const;
+  double CalculateEnjoyment(int health, int life_investment) const;
   double j_;
   std::vector<std::array<float, 101>> cache_;
 };

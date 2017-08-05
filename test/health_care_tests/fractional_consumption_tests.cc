@@ -23,5 +23,5 @@ protected:
 };
 
 TEST_F(FractionalConsumptionTest, GetConsumption) {
-  ASSERT_DOUBLE_EQ(32, consumption_->GetLifeEnjoyment(life_investment_, health_));
+  ASSERT_DOUBLE_EQ(32, consumption_->GetLifeEnjoyment(health_, life_investment_));
 }

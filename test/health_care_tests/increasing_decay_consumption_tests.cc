@@ -23,5 +23,5 @@ protected:
 };
 
 TEST_F(IncreasingDecayConsumptionTest, GetConsumption) {
-  ASSERT_DOUBLE_EQ(29.70966626494221, consumption_->GetLifeEnjoyment(life_investment_, health_));
+  ASSERT_DOUBLE_EQ(29.70966626494221, consumption_->GetLifeEnjoyment(health_, life_investment_));
 }

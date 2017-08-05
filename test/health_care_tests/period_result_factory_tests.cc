@@ -15,7 +15,7 @@ protected:
   class MockConsumption : public healthcare::Consumption {
   public:
     MockConsumption() {}
-    virtual double GetLifeEnjoyment(int li, int health) const override {
+    virtual double GetLifeEnjoyment(int health, int li) const override {
       return 2 * li + health;
     }
   };
@@ -23,7 +23,7 @@ protected:
   class MockRegeneration : public healthcare::Regeneration {
   public:
     MockRegeneration() {}
-    virtual int GetHealthRegained(int hi, int health) const override {
+    virtual int GetHealthRegained(int health, int hi) const override {
       return hi;
     }
   };
@@ -93,4 +93,10 @@ TEST_F(PeriodResultFactoryTest, GetLifeEnjoyment) {
   ASSERT_EQ(90, fact_->GetLifeEnjoyment(alive_state_, investment_));
   ASSERT_EQ(0, fact_->GetLifeEnjoyment(dead_state_, investment_));
   ASSERT_EQ(140, fact_->GetLifeEnjoyment(alive_state_, over_investment_));
+}
+
+TEST_F(PeriodResultFactoryTest, CalculateLifeEnjoyment) {
+  ASSERT_EQ(90, fact_->CalculateLifeEnjoyment(70, 10));
+  ASSERT_EQ(0, fact_->CalculateLifeEnjoyment(0, 10));
+  ASSERT_EQ(140, fact_->CalculateLifeEnjoyment(100, 20));
 }
