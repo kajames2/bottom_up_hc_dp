@@ -1,4 +1,4 @@
-CC := clang++
+CC := clang++-4.0
 SRCDIR := src
 BUILDDIR := build
 TESTDIR := test
@@ -9,7 +9,7 @@ SOURCES := $(shell find $(SRCDIR) -type f -name "*.$(SRCEXT)")
 TESTS := $(shell find $(TESTDIR) -type f -name "*.$(SRCEXT)")
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 TESTOBJECTS := $(patsubst $(TESTDIR)/%,$(BUILDDIR)/%,$(TESTS:.$(SRCEXT)=.o))
-CFLAGS := -g -std=c++14 -O3
+CFLAGS := -g -std=c++14 -O3 -flto
 LIB := -lgtest -lgtest_main -lpthread
 INC := -I include/healthcare -I include/healthcaredp -I include/genericdp
 

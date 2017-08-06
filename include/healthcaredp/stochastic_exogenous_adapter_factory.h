@@ -14,13 +14,13 @@ public:
       genericdp::StochasticExogenousState<healthcare::HealthState>;
   StochasticExogenousAdapterFactory() = default;
   StochasticExogenousAdapterFactory(
-      std::unique_ptr<const HealthStateToExogenousAdapterFactory> fact,
+      std::unique_ptr<const genericdp::ExogenousFactory<healthcare::HealthState>> fact,
       double prob);
   StochasticInvestmentState
-  GetExogenous(const healthcare::HealthState &state) const;
+  GetStochasticExogenous(const healthcare::HealthState &state) const;
 
 private:
-  std::unique_ptr<const HealthStateToExogenousAdapterFactory> fact_;
+  std::unique_ptr<const genericdp::ExogenousFactory<healthcare::HealthState>> fact_;
   double probability_;
 };
 } // namespace healthcare

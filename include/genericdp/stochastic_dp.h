@@ -19,9 +19,9 @@
 
 namespace genericdp {
 template <class T>
-class StochasticDP : public DPTemplate<T, StochasticDPResult> {
+class StochasticDP : public DPTemplate<T, StochasticDPResultSet<T>> {
 public:
-  StochasticDP(std::unique_ptr<DPStorage<T, StochasticDPResult>> storage,
+  StochasticDP(std::unique_ptr<DPStorage<T, StochasticDPResultSet<T>>> storage,
                std::unique_ptr<const EndogenousIteratorFactory<T>> fact,
                std::unique_ptr<const ValueStrategy<T>> calculator,
                std::unique_ptr<const StochasticExogenousSetFactory<T>> ex_fact);
@@ -34,12 +34,12 @@ private:
 
 template <class T>
 StochasticDP<T>::StochasticDP(
-    std::unique_ptr<DPStorage<T, StochasticDPResult>> storage,
+    std::unique_ptr<DPStorage<T, StochasticDPResultSet<T>>> storage,
     std::unique_ptr<const EndogenousIteratorFactory<T>> fact,
     std::unique_ptr<const ValueStrategy<T>> calculator,
     std::unique_ptr<const StochasticExogenousSetFactory<T>> ex_fact)
-    : DPTemplate<T, StochasticDPResult>(std::move(storage), std::move(fact),
-                                        std::move(calculator)),
+    : DPTemplate<T, StochasticDPResultSet<T>>(
+          std::move(storage), std::move(fact), std::move(calculator)),
       ex_fact_(std::move(ex_fact)) {}
 
 template <class T>
@@ -58,12 +58,14 @@ template <class T> void StochasticDP<T>::Train(const T &state) {
   auto ex_state_set = ex_fact_->GetExogenousSet(state);
   StochasticDPResultSet<T> opt_result_set;
   for (auto &ex_state : ex_state_set) {
-    auto opt_state_value = this->CalculateOptimal(*ex_state.GetExogenous());
-    StochasticDPResult<T> opt_result(ex_state.GetExogenous()->Clone(), std::move(opt_state_value.first), opt_state_value.second, ex_state.GetProbability());
-    opt_result_set.push_back(std::move(opt_result));
+    auto opt_state_value = this->CalculateOptimal(ex_state.GetExogenousState());
+    StochasticDPResult<T> opt_result(
+        ex_state.GetExogenousState().Clone(), std::move(opt_state_value.first),
+        opt_state_value.second, ex_state.GetProbability());
+    opt_result_set.AddResult(std::move(opt_result));
   }
-  this->storage_->StoreOptimalValue(state, opt_result_set.GetValue());
-  this->storage_->StoreOptimalResult(state, opt_result_set);
+  this->storage_->StoreOptimalResult(state, opt_result_set,
+                                     opt_result_set.GetValue());
 }
 
 } // namespace genericdp

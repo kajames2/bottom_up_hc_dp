@@ -14,12 +14,12 @@ public:
   using StochasticInvestmentState =
       genericdp::StochasticExogenousState<healthcare::HealthState>;
   StochasticExogenousAdapterSetFactory(
-      std::vector<const healthcaredp::StochasticExogenousAdapterFactory> fact_set);
+      std::vector<healthcaredp::StochasticExogenousAdapterFactory> fact_set);
   std::vector<StochasticInvestmentState>
   GetExogenousSet(const healthcare::HealthState &state) const override;
 
 private:
-  std::vector<const healthcaredp::StochasticExogenousAdapterFactory> fact_set_;
+  std::vector<healthcaredp::StochasticExogenousAdapterFactory> fact_set_;
 };
 } // namespace healthcaredp
 

@@ -19,8 +19,8 @@ public:
   DPResult(DPResult &&) = default;
   DPResult &operator=(DPResult &&) = default;
 
-  std::string GetString() const;
-  std::string GetHeader() const;
+  virtual std::string GetString() const;
+  virtual std::string GetHeader() const;
 
   T GetState() const;
 

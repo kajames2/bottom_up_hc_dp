@@ -16,7 +16,7 @@ EndogenousResultIterator::EndogenousResultIterator(
     , cur_investment_(0, 0)
     , max_remaining_cash_(max_remaining_cash)
     , cached_result_() {
-  cur_investment_.life_investment = invest_state_.cash - max_remaining_cash_;
+  cur_investment_.life_investment = std::max(0, invest_state_.cash - max_remaining_cash_);
   ChangeHealthInvestment(0);;
   prev_health_regained_ = cur_health_regained_;
   cached_result_ = std::make_unique<ResultToEndogenousAdapter>(state_factory_.GetPeriodResult(invest_state_, cur_investment_));

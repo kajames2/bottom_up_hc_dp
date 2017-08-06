@@ -17,8 +17,6 @@ public:
   StochasticDPResultSet(std::vector<StochasticDPResult<T>> result_vec);
   void AddResult(StochasticDPResult<T> result);
   double GetValue() const;
-  std::string GetHeader() const;
-  std::string GetString() const;
 
   StochasticDPResultSet(const StochasticDPResultSet &other)
       : result_vec_(other.result_vec_), value_(other.value_) {}
@@ -28,6 +26,16 @@ public:
     swap(*this, copy);
     return *this;
   }
+    friend std::ostream &operator<<(std::ostream &out,
+                                  const StochasticDPResultSet<T> &b) {
+      out << b.result_vec_.at(0).GetHeader() << std::endl;
+      for (const auto &result : b.result_vec_) {
+        out << result.GetString() << std::endl;
+      }
+      out << "Expected Value: " << b.value_ << std::endl;
+      return out;
+  }
+
   StochasticDPResultSet(StochasticDPResultSet &&) = default;
   StochasticDPResultSet &operator=(StochasticDPResultSet &&) = default;
 
@@ -58,21 +66,9 @@ template <class T> double StochasticDPResultSet<T>::GetValue() const {
 template <class T> double StochasticDPResultSet<T>::CalculateValue() const {
   double expected_value = 0;
   for (auto &result : result_vec_) {
-    expected_value += result.value * result.probability;
+    expected_value += result.GetValue() * result.GetProbability();
   }
   return expected_value;
-}
-
-template <class T> std::string StochasticDPResultSet<T>::GetString() const {
-  std::string out_str = "";
-  for (const auto &result : result_vec_) {
-    out_str += result.GetString() + std::endl;
-  }
-  return out_str;
-}
-
-template <class T> std::string StochasticDPResultSet<T>::GetHeader() const {
-  return result_vec_.at(0).GetHeader();
 }
 
 } // namespace genericdp

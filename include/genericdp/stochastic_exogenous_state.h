@@ -11,7 +11,7 @@ public:
   StochasticExogenousState(std::unique_ptr<ExogenousState<T>> state, double prob)
       : state_(std::move(state)), probability_(prob) {}
   double GetProbability() const { return probability_; }
-  ExogenousState<T>* GetExogenousState() const {return state_.get();}
+  const ExogenousState<T>& GetExogenousState() const {return *state_;}
 private:
   std::unique_ptr<ExogenousState<T>> state_;
   double probability_;
