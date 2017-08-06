@@ -7,6 +7,8 @@
 #include "result_to_endogenous_adapter.h"
 
 #include <memory>
+#include <stdexcept>
+#include <string>
 #include <vector>
 
 namespace healthcaredp {
@@ -21,12 +23,11 @@ public:
   bool IsTerminalState(const healthcare::HealthState &state) const override;
   bool IsStoredState(const healthcare::HealthState &state) const override;
   double GetOptimalValue(const healthcare::HealthState &state) const override;
-  void StoreOptimalResult(const healthcare::HealthState &state,
-                          T end_state) override;
-  void StoreOptimalValue(const healthcare::HealthState &state,
-                         double value) override;
+  void StoreOptimalResult(const healthcare::HealthState &state, T end_state,
+                          double value) override;
 
 private:
+  bool IsValidState(const healthcare::HealthState &state) const;
   int GetIndex(const healthcare::HealthState &state) const;
   std::vector<T> result_table_;
   std::vector<double> value_table_;
@@ -74,21 +75,28 @@ bool HealthDPStorage<T>::IsTerminalState(
 
 template <typename T>
 void HealthDPStorage<T>::StoreOptimalResult(
-    const healthcare::HealthState &state, T opt_result) {
+    const healthcare::HealthState &state, T opt_result, double value) {
   result_table_.at(GetIndex(state)) = opt_result;
+  value_table_.at(GetIndex(state)) = value;
   is_stored_table_.at(GetIndex(state)) = true;
 }
 
 template <typename T>
-void HealthDPStorage<T>::StoreOptimalValue(const healthcare::HealthState &state,
-                                           double value) {
-  value_table_.at(GetIndex(state)) = value;
+int HealthDPStorage<T>::GetIndex(const healthcare::HealthState &state) const {
+  if (IsValidState(state)) {
+    return ((state.period - 1) * sub_table_size_) + (state.health * row_size_) +
+           state.cash;
+  } else {
+    throw std::out_of_range("HealthState out of range.");
+  }
 }
 
 template <typename T>
-int HealthDPStorage<T>::GetIndex(const healthcare::HealthState &state) const {
-  return ((state.period - 1) * sub_table_size_) + (state.health * row_size_) +
-         state.cash;
+bool HealthDPStorage<T>::IsValidState(
+    const healthcare::HealthState &state) const {
+  return state.period > 0 && state.period <= max_periods_ &&
+         state.health >= 0 && state.health <= 100 && state.cash >= 0 &&
+         state.cash <= max_remaining_cash_;
 }
 
 } // namespace healthcaredp

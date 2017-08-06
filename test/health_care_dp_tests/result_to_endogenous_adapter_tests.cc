@@ -1,8 +1,8 @@
-#include "endogenous_state.h"
 #include "result_to_endogenous_adapter.h"
-#include "period_result.h"
+#include "endogenous_state.h"
 #include "health_state.h"
 #include "investment.h"
+#include "period_result.h"
 
 #include <gtest/gtest.h>
 #include <memory>
@@ -17,11 +17,12 @@ protected:
     healthcare::Investment investment(20, 10);
     life_enjoyment_ = 50;
     healthcare::PeriodResult result(state_, investment, life_enjoyment_);
-    end_state_ = std::make_unique<healthcaredp::ResultToEndogenousAdapter>(result);
+    end_state_ =
+        std::make_unique<healthcaredp::ResultToEndogenousAdapter>(result);
   }
   healthcare::HealthState state_;
   int life_enjoyment_;
-  std::unique_ptr<genericdp::EndogenousState<healthcare::HealthState>> end_state_;
+  std::unique_ptr<healthcaredp::ResultToEndogenousAdapter> end_state_;
 };
 
 TEST_F(ResultToEndogenousAdapterTest, GetStateTest) {
@@ -33,7 +34,13 @@ TEST_F(ResultToEndogenousAdapterTest, GetValueTest) {
 }
 
 TEST_F(ResultToEndogenousAdapterTest, CloneTest) {
-  std::shared_ptr<genericdp::EndogenousState<healthcare::HealthState>> copy = end_state_->Clone();
+  auto copy = end_state_->Clone();
   ASSERT_EQ(end_state_->GetState(), copy->GetState());
   ASSERT_EQ(end_state_->GetValue(), copy->GetValue());
+}
+
+TEST_F(ResultToEndogenousAdapterTest, UpdateEndStateTest) {
+  end_state_->UpdateEndState(15, 30, 45);
+  ASSERT_EQ(45, end_state_->GetValue());
+  ASSERT_EQ(healthcare::HealthState(1, 15, 30, 10), end_state_->GetState());
 }

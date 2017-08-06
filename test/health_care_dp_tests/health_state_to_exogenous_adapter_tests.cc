@@ -23,3 +23,8 @@ protected:
 TEST_F(HealthStateToExogenousAdapterTest, GetStateTest) {
   ASSERT_EQ(state_, int_state_->GetState());
 }
+
+TEST_F(HealthStateToExogenousAdapterTest, CloneTest) {
+  auto clone = int_state_->Clone();
+  ASSERT_EQ(clone->GetState(), int_state_->GetState());
+}

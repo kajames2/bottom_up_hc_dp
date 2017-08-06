@@ -60,8 +60,7 @@ template <class T> void DP<T>::Train(const T &state) {
   auto opt_state_value = this->CalculateOptimal(*ex_state);
   DPResult<T> opt_result(ex_state->Clone(), std::move(opt_state_value.first),
                          opt_state_value.second);
-  this->storage_->StoreOptimalValue(state, opt_state_value.second);
-  this->storage_->StoreOptimalResult(state, opt_result);
+  this->storage_->StoreOptimalResult(state, opt_result, opt_state_value.second);
 }
 } // namespace genericdp
 #endif // _DP_H_
