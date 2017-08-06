@@ -9,7 +9,7 @@
 
 namespace healthcaredp {
 EndogenousResultIterator::EndogenousResultIterator(
-    const ResultToEndogenousAdapterFactory &state_factory,
+    const healthcare::PeriodResultFactory &state_factory,
     const healthcare::HealthState &state, int max_remaining_cash)
     : state_factory_(state_factory)
     , invest_state_(state)
@@ -19,7 +19,7 @@ EndogenousResultIterator::EndogenousResultIterator(
   cur_investment_.life_investment = invest_state_.cash - max_remaining_cash_;
   ChangeHealthInvestment(0);;
   prev_health_regained_ = cur_health_regained_;
-  cached_result_ = state_factory_.GetEndogenousResult(invest_state_, cur_investment_);
+  cached_result_ = std::make_unique<ResultToEndogenousAdapter>(state_factory_.GetPeriodResult(invest_state_, cur_investment_));
   state_ = GetEndogenousResult();
 }
 

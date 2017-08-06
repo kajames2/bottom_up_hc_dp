@@ -4,21 +4,20 @@
 #include "exogenous_state.h"
 #include "health_state.h"
 #include "health_state_to_exogenous_adapter_factory.h"
-
+#include "stochastic_exogenous_state.h"
 #include <memory>
 
 namespace healthcaredp {
 class StochasticExogenousAdapterFactory {
 public:
+  using StochasticInvestmentState =
+      genericdp::StochasticExogenousState<healthcare::HealthState>;
   StochasticExogenousAdapterFactory() = default;
   StochasticExogenousAdapterFactory(
-      std::unique_ptr<const HealthStateToExogenousAdapterFactory> fact, double prob)
-      : fact_(std::move(fact)), probability_(prob) {}
-  std::unique_ptr<genericdp::ExogenousState<healthcare::HealthState>>
-  GetExogenous(const healthcare::HealthState &state) const {
-    return fact_->GetExogenous(state);
-  }
-  double GetProbability() const { return probability_; }
+      std::unique_ptr<const HealthStateToExogenousAdapterFactory> fact,
+      double prob);
+  StochasticInvestmentState
+  GetExogenous(const healthcare::HealthState &state) const;
 
 private:
   std::unique_ptr<const HealthStateToExogenousAdapterFactory> fact_;

@@ -6,7 +6,6 @@
 #include "investment.h"
 #include "period_result_factory.h"
 #include "regeneration.h"
-#include "result_to_endogenous_adapter_factory.h"
 
 #include <algorithm>
 #include <cmath>
@@ -45,10 +44,9 @@ protected:
         std::make_shared<const MockConsumption>();
     healthcare::PeriodResultFactory fact =
         healthcare::PeriodResultFactory(regen, consumption);
-    healthcaredp::ResultToEndogenousAdapterFactory end_factory(fact);
     end_it_factory_ =
         std::make_unique<healthcaredp::EndogenousResultIteratorFactory>(
-            end_factory, max_remaining_cash_);
+            fact, max_remaining_cash_);
     end_it_factory_short_ =
         std::make_unique<healthcaredp::EndogenousResultIteratorFactory>(
             regen, consumption, max_remaining_cash_);

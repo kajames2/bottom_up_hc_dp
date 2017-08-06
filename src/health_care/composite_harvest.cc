@@ -1,7 +1,6 @@
 #include "composite_harvest.h"
 #include "harvest.h"
 #include "health_state.h"
-#include "null_harvest.h"
 
 #include <vector>
 

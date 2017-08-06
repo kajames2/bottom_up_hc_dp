@@ -7,7 +7,7 @@
 #include "health_state.h"
 #include "health_state_to_exogenous_adapter.h"
 #include "regeneration.h"
-#include "result_to_endogenous_adapter_factory.h"
+#include "period_result_factory.h"
 
 #include <memory>
 
@@ -23,13 +23,13 @@ public:
       std::shared_ptr<const healthcare::Consumption> consumption,
       int max_cash_on_hand = 0);
   EndogenousResultIteratorFactory(
-      const ResultToEndogenousAdapterFactory &state_factory,
+      const healthcare::PeriodResultFactory &state_factory,
       int max_remaining_cash = 0);
   virtual std::unique_ptr<EndIt>
   GetIterator(const ExState &state) const override;
 
 private:
-  ResultToEndogenousAdapterFactory state_factory_;
+  healthcare::PeriodResultFactory state_factory_;
   int max_remaining_cash_;
 };
 } // namespace healthcaredp

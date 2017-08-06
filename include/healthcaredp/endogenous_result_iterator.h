@@ -6,7 +6,7 @@
 #include "health_state.h"
 #include "investment.h"
 #include "result_to_endogenous_adapter.h"
-#include "result_to_endogenous_adapter_factory.h"
+#include "period_result_factory.h"
 
 #include <memory>
 
@@ -15,7 +15,7 @@ class EndogenousResultIterator
     : public genericdp::EndogenousIterator<healthcare::HealthState> {
 public:
   EndogenousResultIterator(
-      const ResultToEndogenousAdapterFactory& state_factory,
+      const healthcare::PeriodResultFactory& state_factory,
       const healthcare::HealthState &state,
       int max_remaining_cash = 0);
   virtual EndogenousResultIterator &operator++() override;
@@ -32,7 +32,7 @@ private:
   healthcare::Investment cur_investment_;
   int cur_health_regained_;
   int prev_health_regained_;
-  ResultToEndogenousAdapterFactory state_factory_;
+  healthcare::PeriodResultFactory state_factory_;
   std::unique_ptr<ResultToEndogenousAdapter> cached_result_;
 };
 } // namespace healthcaredp

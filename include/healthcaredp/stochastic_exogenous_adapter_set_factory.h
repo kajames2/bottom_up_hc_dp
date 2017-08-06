@@ -14,17 +14,9 @@ public:
   using StochasticInvestmentState =
       genericdp::StochasticExogenousState<healthcare::HealthState>;
   StochasticExogenousAdapterSetFactory(
-      std::vector<const healthcaredp::StochasticExogenousAdapterFactory> fact_set)
-      : fact_set_(std::move(fact_set)) {}
+      std::vector<const healthcaredp::StochasticExogenousAdapterFactory> fact_set);
   std::vector<StochasticInvestmentState>
-  GetExogenousSet(const healthcare::HealthState &state) const override {
-    std::vector<const StochasticInvestmentState &> state_set;
-    for (auto &fact : fact_set_) {
-      state_set.push_back(StochasticInvestmentState(fact.GetExogenous(state),
-                                                    fact.GetProbability()));
-    }
-    return std::move(state_set);
-  }
+  GetExogenousSet(const healthcare::HealthState &state) const override;
 
 private:
   std::vector<const healthcaredp::StochasticExogenousAdapterFactory> fact_set_;

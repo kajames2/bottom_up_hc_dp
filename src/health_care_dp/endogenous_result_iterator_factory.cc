@@ -10,11 +10,11 @@ EndogenousResultIteratorFactory::EndogenousResultIteratorFactory(
     std::shared_ptr<const healthcare::Regeneration> regen,
     std::shared_ptr<const healthcare::Consumption> consumption,
     int max_remaining_cash)
-    : state_factory_(healthcare::PeriodResultFactory(regen, consumption)),
+    : state_factory_(regen, consumption),
       max_remaining_cash_(max_remaining_cash) {}
 
 EndogenousResultIteratorFactory::EndogenousResultIteratorFactory(
-    const ResultToEndogenousAdapterFactory &state_factory,
+    const healthcare::PeriodResultFactory &state_factory,
     int max_remaining_cash)
     : state_factory_(state_factory), max_remaining_cash_(max_remaining_cash) {}
 
