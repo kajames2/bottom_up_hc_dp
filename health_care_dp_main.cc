@@ -34,7 +34,7 @@ int main() {
           regen, consume, max_remaining_cash);
 
   auto storage =
-      std::make_unique<healthcaredp::HealthDPStorage<genericdp::DPResult>>(
+      std::make_unique<healthcaredp::HealthDPStorage<genericdp::DPResult<healthcare::HealthState>>>(
           n_periods, max_remaining_cash);
   auto value_strat =
       std::make_unique<genericdp::ValueStrategy<healthcare::HealthState>>(1);

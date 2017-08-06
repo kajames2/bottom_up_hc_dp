@@ -6,18 +6,18 @@
 #include <memory>
 
 namespace genericdp {
-template <typename T, template <typename> class Container> class DPStorage {
+template <typename Index, typename Result> class DPStorage {
 public:
-  virtual const Container<T> &GetOptimalResult(const T &state) const = 0;
-  virtual bool IsTerminalState(const T &state) const = 0;
-  virtual bool IsStoredState(const T &state) const = 0;
-  virtual double GetOptimalValue(const T &state) const = 0;
-  virtual void StoreOptimalResult(const T &state,
-                                  Container<T> opt_result) = 0;
-  virtual void StoreOptimalValue(const T &state, double value) = 0;
+  virtual const Result &GetOptimalResult(const Index &state) const = 0;
+  virtual bool IsTerminalState(const Index &state) const = 0;
+  virtual bool IsStoredState(const Index &state) const = 0;
+  virtual double GetOptimalValue(const Index &state) const = 0;
+  virtual void StoreOptimalResult(const Index &state,
+                                  Result opt_result) = 0;
+  virtual void StoreOptimalValue(const Index &state, double value) = 0;
 
   DPStorage() = default;
-  DPStorage(const DPStorage<T, Container> &) = delete;
+  DPStorage(const DPStorage&) = delete;
   DPStorage &operator=(const DPStorage &) = delete;
   virtual ~DPStorage() {}
 };

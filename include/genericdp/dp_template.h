@@ -16,15 +16,15 @@
 #include <vector>
 
 namespace genericdp {
-template <typename T, template <typename> class Container> class DPTemplate {
+template <typename T, typename Result> class DPTemplate {
 public:
-  DPTemplate(std::unique_ptr<DPStorage<T, DPResult>> storage,
+  DPTemplate(std::unique_ptr<DPStorage<T, Result>> storage,
              std::unique_ptr<const EndogenousIteratorFactory<T>> fact,
              std::unique_ptr<const ValueStrategy<T>> calculator)
       : storage_(std::move(storage)), fact_(std::move(fact)),
         calculator_(std::move(calculator)) {}
 
-  const Container<T> &GetOptimalResult(const T &init_state);
+  const Result& GetOptimalResult(const T &init_state);
   double GetOptimalValue(const T &init_state);
   void BottomUpTrain(StateIterator<T> &state_iterator);
   void TrainIfNecessary(const T &state);
@@ -34,26 +34,26 @@ protected:
   std::pair<std::unique_ptr<const EndogenousState<T>>, double>
   CalculateOptimal(const ExogenousState<T> &int_state);
 
-  std::unique_ptr<DPStorage<T, DPResult>> storage_;
+  std::unique_ptr<DPStorage<T, Result>> storage_;
   std::unique_ptr<const EndogenousIteratorFactory<T>> fact_;
   std::unique_ptr<const ValueStrategy<T>> calculator_;
 };
 
-template <typename T, template <typename> class Container>
-void DPTemplate<T, Container>::BottomUpTrain(StateIterator<T> &state_iterator) {
+template <typename T, typename Result>
+void DPTemplate<T, Result>::BottomUpTrain(StateIterator<T> &state_iterator) {
   do {
     Train(*state_iterator);
   } while (++state_iterator);
 }
 
-template <typename T, template <typename> class Container>
-const Container<T> &DPTemplate<T, Container>::GetOptimalResult(const T &state) {
+template <typename T, typename Result>
+const Result &DPTemplate<T, Result>::GetOptimalResult(const T &state) {
   TrainIfNecessary(state);
   return storage_->GetOptimalResult(state);
 }
 
-template <typename T, template <typename> class Container>
-double DPTemplate<T, Container>::GetOptimalValue(const T &state) {
+template <typename T, typename Result>
+double DPTemplate<T, Result>::GetOptimalValue(const T &state) {
   if (storage_->IsTerminalState(state)) {
     return calculator_->CalculateTerminalValue(state);
   }
@@ -61,16 +61,16 @@ double DPTemplate<T, Container>::GetOptimalValue(const T &state) {
   return storage_->GetOptimalValue(state);
 }
 
-template <typename T, template <typename> class Container>
-void DPTemplate<T, Container>::TrainIfNecessary(const T &state) {
+template <typename T, typename Result>
+void DPTemplate<T, Result>::TrainIfNecessary(const T &state) {
   if (!storage_->IsStoredState(state)) {
     Train(state);
   }
 }
 
-template <typename T, template <typename> class Container>
+template <typename T, typename Result>
 std::pair<std::unique_ptr<const EndogenousState<T>>, double>
-DPTemplate<T, Container>::CalculateOptimal(const ExogenousState<T> &int_state) {
+DPTemplate<T, Result>::CalculateOptimal(const ExogenousState<T> &int_state) {
   auto end_it_ptr = fact_->GetIterator(int_state);
   EndogenousIterator<T> &end_it_ref = *end_it_ptr;
   std::unique_ptr<const EndogenousState<T>> opt_state = nullptr;

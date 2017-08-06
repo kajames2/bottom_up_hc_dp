@@ -17,7 +17,8 @@ public:
   HealthStateToExogenousAdapterFactory(
       std::shared_ptr<const healthcare::Harvest> harvest,
       std::shared_ptr<const healthcare::Degeneration> degen);
-  virtual std::unique_ptr<genericdp::ExogenousState<healthcare::HealthState>> GetExogenous(const healthcare::HealthState &state) const override;
+  virtual std::unique_ptr<genericdp::ExogenousState<healthcare::HealthState>>
+  GetExogenous(const healthcare::HealthState &state) const override;
 
 private:
   healthcare::HealthInvestmentStateFactory investment_fact_;

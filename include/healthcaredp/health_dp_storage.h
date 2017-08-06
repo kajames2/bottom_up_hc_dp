@@ -10,38 +10,36 @@
 #include <vector>
 
 namespace healthcaredp {
-template <template <typename> class Container>
+template <typename T>
 class HealthDPStorage
-    : public genericdp::DPStorage<healthcare::HealthState, Container> {
+    : public genericdp::DPStorage<healthcare::HealthState, T> {
 public:
   HealthDPStorage(int max_periods, int max_remaining_cash);
 
-  const Container<healthcare::HealthState> &
+  const T &
   GetOptimalResult(const healthcare::HealthState &state) const override;
   bool IsTerminalState(const healthcare::HealthState &state) const override;
   bool IsStoredState(const healthcare::HealthState &state) const override;
   double GetOptimalValue(const healthcare::HealthState &state) const override;
-  void StoreOptimalResult(
-      const healthcare::HealthState &state,
-      Container<healthcare::HealthState> end_state) override;
+  void StoreOptimalResult(const healthcare::HealthState &state,
+                          T end_state) override;
   void StoreOptimalValue(const healthcare::HealthState &state,
                          double value) override;
 
 private:
   int GetIndex(const healthcare::HealthState &state) const;
-  std::vector<Container<healthcare::HealthState>> result_table_;
+  std::vector<T> result_table_;
   std::vector<double> value_table_;
   std::vector<bool> is_stored_table_;
-  
+
   int max_periods_;
   int max_remaining_cash_;
   const int sub_table_size_;
   const int row_size_;
 };
 
-template <template <typename> class Container>
-HealthDPStorage<Container>::HealthDPStorage(int max_periods,
-                                            int max_remaining_cash)
+template <typename T>
+HealthDPStorage<T>::HealthDPStorage(int max_periods, int max_remaining_cash)
     : max_periods_(max_periods), max_remaining_cash_(max_remaining_cash),
       sub_table_size_((100 + 1) * (max_remaining_cash + 1)),
       row_size_(max_remaining_cash_ + 1) {
@@ -50,48 +48,45 @@ HealthDPStorage<Container>::HealthDPStorage(int max_periods,
   is_stored_table_.resize(max_periods_ * sub_table_size_, false);
 }
 
-template <template <typename> class Container>
-bool HealthDPStorage<Container>::IsStoredState(
+template <typename T>
+bool HealthDPStorage<T>::IsStoredState(
     const healthcare::HealthState &state) const {
   return is_stored_table_.at(GetIndex(state));
 }
 
-template <template <typename> class Container>
-double HealthDPStorage<Container>::GetOptimalValue(
+template <typename T>
+double HealthDPStorage<T>::GetOptimalValue(
     const healthcare::HealthState &state) const {
   return value_table_.at(GetIndex(state));
 }
 
-template <template <typename> class Container>
-const Container<healthcare::HealthState> &
-HealthDPStorage<Container>::GetOptimalResult(
+template <typename T>
+const T &HealthDPStorage<T>::GetOptimalResult(
     const healthcare::HealthState &state) const {
   return result_table_.at(GetIndex(state));
 }
 
-template <template <typename> class Container>
-bool HealthDPStorage<Container>::IsTerminalState(
+template <typename T>
+bool HealthDPStorage<T>::IsTerminalState(
     const healthcare::HealthState &state) const {
   return state.period > max_periods_ || !healthcare::IsAlive(state);
 }
 
-template <template <typename> class Container>
-void HealthDPStorage<Container>::StoreOptimalResult(
-    const healthcare::HealthState &state,
-    Container<healthcare::HealthState> opt_result) {
+template <typename T>
+void HealthDPStorage<T>::StoreOptimalResult(
+    const healthcare::HealthState &state, T opt_result) {
   result_table_.at(GetIndex(state)) = opt_result;
   is_stored_table_.at(GetIndex(state)) = true;
 }
 
-template <template <typename> class Container>
-void HealthDPStorage<Container>::StoreOptimalValue(
-    const healthcare::HealthState &state, double value) {
+template <typename T>
+void HealthDPStorage<T>::StoreOptimalValue(const healthcare::HealthState &state,
+                                           double value) {
   value_table_.at(GetIndex(state)) = value;
 }
 
-template <template <typename> class Container>
-int HealthDPStorage<Container>::GetIndex(
-    const healthcare::HealthState &state) const {
+template <typename T>
+int HealthDPStorage<T>::GetIndex(const healthcare::HealthState &state) const {
   return ((state.period - 1) * sub_table_size_) + (state.health * row_size_) +
          state.cash;
 }

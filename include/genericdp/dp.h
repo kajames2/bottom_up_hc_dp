@@ -16,9 +16,9 @@
 #include <vector>
 
 namespace genericdp {
-template <class T> class DP : public DPTemplate<T, DPResult> {
+template <class T> class DP : public DPTemplate<T, DPResult<T>> {
 public:
-  DP(std::unique_ptr<DPStorage<T, DPResult>> storage,
+  DP(std::unique_ptr<DPStorage<T, DPResult<T>>> storage,
      std::unique_ptr<const EndogenousIteratorFactory<T>> fact,
      std::unique_ptr<const ValueStrategy<T>> calculator,
      std::unique_ptr<const ExogenousFactory<T>> ex_fact);
@@ -31,11 +31,11 @@ private:
 };
 
 template <class T>
-DP<T>::DP(std::unique_ptr<DPStorage<T, DPResult>> storage,
+DP<T>::DP(std::unique_ptr<DPStorage<T, DPResult<T>>> storage,
           std::unique_ptr<const EndogenousIteratorFactory<T>> fact,
           std::unique_ptr<const ValueStrategy<T>> calculator,
           std::unique_ptr<const ExogenousFactory<T>> ex_fact)
-    : DPTemplate<T, DPResult>(std::move(storage), std::move(fact), std::move(calculator))
+    : DPTemplate<T, DPResult<T>>(std::move(storage), std::move(fact), std::move(calculator))
     , ex_fact_(std::move(ex_fact)) {}
 
 template <class T>
