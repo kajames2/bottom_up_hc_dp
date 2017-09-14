@@ -19,12 +19,18 @@ public:
   DPResult(DPResult &&) = default;
   DPResult &operator=(DPResult &&) = default;
 
-  virtual std::string GetString() const;
   virtual std::string GetHeader() const;
 
   T GetState() const;
 
   double GetValue() const;
+
+  friend std::ostream &operator<<(std::ostream &out, const DPResult<T> &b) {
+    out << b.exogenous_state_->GetString() << ", "
+        << b.endogenous_state_->GetString() << ", "
+        << std::to_string(b.GetValue());
+    return out;
+  }
 
 private:
   std::unique_ptr<const ExogenousState<T>> exogenous_state_;
@@ -53,11 +59,6 @@ template <class T> DPResult<T> &DPResult<T>::operator=(const DPResult &other) {
   DPResult copy(other);
   swap(*this, copy);
   return *this;
-}
-
-template <class T> std::string DPResult<T>::GetString() const {
-  return exogenous_state_->GetString() + ", " + endogenous_state_->GetString() +
-         ", " + std::to_string(GetValue());
 }
 
 template <class T> std::string DPResult<T>::GetHeader() const {

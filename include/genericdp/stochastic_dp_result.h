@@ -28,8 +28,10 @@ public:
   StochasticDPResult(StochasticDPResult &&) = default;
   StochasticDPResult &operator=(StochasticDPResult &&) = default;
 
-  std::string GetString() const override {
-    return std::to_string(probability_) + ", " + DPResult<T>::GetString();
+  friend std::ostream &operator<<(std::ostream &out,
+                                  const StochasticDPResult<T> &b) {
+    out << std::to_string(b.probability_) << ", " << static_cast<const DPResult<T>&>(b);
+    return out;
   }
 
   std::string GetHeader() const override {

@@ -1,23 +1,22 @@
 #ifndef _FRACTIONAL_CONSUMPTION_H_
 #define _FRACTIONAL_CONSUMPTION_H_
 
-#include "consumption.h"
+#include "cached_consumption.h"
 
 #include <array>
 #include <vector>
+#include <memory>
 
 namespace healthcare {
 
-class FractionalConsumption : public Consumption {
+class FractionalConsumption : public CachedConsumption {
 public:
   FractionalConsumption(double j);
   FractionalConsumption(double j, int max_investment);
-  double GetLifeEnjoyment(int health, int life_investment) const override;
 
 private:
-  double CalculateEnjoyment(int health, int life_investment) const;
+  double CalculateLifeEnjoyment(int health, int life_investment) const override;
   double j_;
-  std::vector<std::array<float, 101>> cache_;
 };
 
 } // namespace healthcare

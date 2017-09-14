@@ -26,18 +26,24 @@ public:
     swap(*this, copy);
     return *this;
   }
-    friend std::ostream &operator<<(std::ostream &out,
+
+  std::string GetHeader() const {
+    return result_vec_.at(0).GetHeader();
+  }
+  
+  friend std::ostream &operator<<(std::ostream &out,
                                   const StochasticDPResultSet<T> &b) {
-      out << b.result_vec_.at(0).GetHeader() << std::endl;
-      for (const auto &result : b.result_vec_) {
-        out << result.GetString() << std::endl;
-      }
-      out << "Expected Value: " << b.value_ << std::endl;
-      return out;
+    for (const auto &result : b.result_vec_) {
+      out << result.GetString() << std::endl;
+    }
+    out << "Expected Value: " << b.value_;
+    return out;
   }
 
   StochasticDPResultSet(StochasticDPResultSet &&) = default;
   StochasticDPResultSet &operator=(StochasticDPResultSet &&) = default;
+
+  StochasticDPResult<T> &operator[](int i) { return result_vec_[i]; }
 
 private:
   double CalculateValue() const;

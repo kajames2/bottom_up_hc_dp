@@ -10,7 +10,7 @@ class Regeneration {
   Regeneration& operator=(const Regeneration&) = delete;
   virtual ~Regeneration() {}
 
-  virtual int GetHealthRegained(int health_investment, int health) const = 0;
+  virtual int GetHealthRegained(int health, int health_investment) const = 0;
  private:
 };
 
